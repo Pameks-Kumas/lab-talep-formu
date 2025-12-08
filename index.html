@@ -3,12 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lab Talep Sistemi - Giriş</title>
+    <title>Pameks Lab Talep Sistemi - Giriş</title>
     <style>
         /* Modern Font ve Genel Ayarlar */
         body {
             font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #f4f7f9; /* Daha yumuşak bir arka plan */
+            background-color: #f0f4f8; 
             display: flex;
             justify-content: center;
             align-items: center;
@@ -16,111 +16,109 @@
             margin: 0;
         }
 
-        /* Ana Giriş Kutusu Tasarımı */
+        /* Ana Giriş Kutusu */
         .login-box {
             background: #ffffff;
             padding: 45px;
-            border-radius: 16px; /* Daha yuvarlak köşeler */
-            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.08); /* Daha modern, yumuşak gölge */
+            border-radius: 20px; 
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.05);
             width: 100%;
-            max-width: 400px;
+            max-width: 380px;
             text-align: center;
             transition: transform 0.3s ease;
         }
-        .login-box:hover {
-            transform: translateY(-5px); /* Hafif yukarı kalkma efekti */
-        }
+        .login-box:hover { transform: translateY(-3px); }
 
-        h2 { margin-bottom: 30px; color: #1a1a1a; font-weight: 700; letter-spacing: -0.5px; }
+        h2 { margin-bottom: 30px; color: #1e293b; font-weight: 800; letter-spacing: -0.5px; }
         
-        .input-group { margin-bottom: 20px; text-align: left; }
-        label { display: block; margin-bottom: 8px; font-size: 14px; color: #555; font-weight: 600; }
+        .input-group { margin-bottom: 18px; text-align: left; }
+        label { display: block; margin-bottom: 8px; font-size: 13px; color: #64748b; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
         input {
             width: 100%;
             padding: 14px;
-            border: 2px solid #eee;
-            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
             box-sizing: border-box;
             font-size: 15px;
             transition: all 0.3s;
-            background-color: #f9f9f9;
+            background-color: #f8fafc;
+            color: #334155;
         }
-        input:focus { border-color: #007bff; background-color: #fff; outline: none; box-shadow: 0 0 0 4px rgba(0, 123, 255, 0.1); }
+        input:focus { border-color: #3b82f6; background-color: #fff; outline: none; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
 
         /* Butonlar */
         .btn {
-            width: 100%; padding: 14px; border: none; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+            width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s;
         }
-        .btn-primary { background-color: #007bff; color: white; margin-top: 20px; box-shadow: 0 4px 6px rgba(0, 123, 255, 0.2); }
-        .btn-primary:hover { background-color: #0062cc; transform: translateY(-2px); box-shadow: 0 6px 8px rgba(0, 123, 255, 0.3); }
+        .btn-primary { 
+            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
+            color: white; margin-top: 20px; 
+            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2); 
+        }
+        .btn-primary:hover { transform: translateY(-1px); box-shadow: 0 6px 15px rgba(37, 99, 235, 0.3); }
         .btn-primary:active { transform: translateY(0); }
 
-        .btn-secondary { background-color: #e9ecef; color: #333; margin-top: 12px; }
-        .btn-secondary:hover { background-color: #dde2e6; color: #000; }
+        .btn-secondary { background-color: #f1f5f9; color: #475569; margin-top: 12px; }
+        .btn-secondary:hover { background-color: #e2e8f0; color: #1e293b; }
 
         .message { margin-top: 15px; font-size: 14px; min-height: 20px; font-weight: 500; }
 
-        /* --- MODERN MODAL (POP-UP) TASARIMI --- */
+        /* --- MODERN MODAL (ORTAK TASARIM) --- */
         .modal {
             display: none; 
             position: fixed; 
             z-index: 100; 
             left: 0; top: 0;
             width: 100%; height: 100%; 
-            background-color: rgba(0,0,0,0.4); /* Daha hafif karanlık */
-            backdrop-filter: blur(8px); /* Arka planı bulanıklaştırma efekti */
+            background-color: rgba(15, 23, 42, 0.6); /* Koyu lacivert transparan */
+            backdrop-filter: blur(8px);
             justify-content: center;
             align-items: center;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        /* Modal açılınca bu class eklenecek */
         .modal.show { display: flex; opacity: 1; }
 
         .modal-content {
             background-color: #fff;
-            padding: 0; /* Padding'i iç elementlere taşıdık */
-            border-radius: 20px;
-            width: 90%; max-width: 420px;
-            text-align: left;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); /* Derin gölge */
+            border-radius: 24px;
+            width: 90%; max-width: 400px;
+            text-align: center; /* Her şeyi ortala */
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
             position: relative;
-            transform: translateY(30px) scale(0.95); /* Başlangıç pozisyonu */
-            transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1); /* Yumuşak geçiş animasyonu */
-            overflow: hidden;
+            transform: scale(0.90);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); /* Yaylanma efekti */
+            padding: 30px;
         }
-        /* Modal açılınca bu class eklenecek */
-        .modal.show .modal-content { transform: translateY(0) scale(1); }
+        .modal.show .modal-content { transform: scale(1); }
 
-        .modal-header {
-            padding: 25px 30px;
-            background: #f8f9fa;
-            border-bottom: 1px solid #eee;
-            display: flex; justify-content: space-between; align-items: center;
+        /* --- BAŞARI MODALI ÖZEL TASARIM --- */
+        .success-icon-circle {
+            width: 80px; height: 80px;
+            background-color: #dcfce7; /* Açık yeşil daire */
+            color: #16a34a; /* Koyu yeşil ikon */
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            margin: 0 auto 20px auto; /* Ortala */
+            font-size: 40px;
         }
-        .modal-header h3 { margin: 0; color: #333; font-size: 1.25rem; }
+        .success-title { font-size: 22px; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
+        .success-desc { font-size: 15px; color: #64748b; margin-bottom: 25px; line-height: 1.5; }
+        
+        .close-btn { position: absolute; top: 20px; right: 20px; font-size: 24px; cursor: pointer; color: #cbd5e1; }
+        .close-btn:hover { color: #64748b; }
 
-        .modal-body { padding: 30px; }
-        .modal-body .input-group { margin-bottom: 15px; }
-
-        .close-btn {
-            font-size: 28px; color: #aaa; cursor: pointer; line-height: 1; transition: color 0.2s;
-            background: #eee; border-radius: 50%; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center;
-        }
-        .close-btn:hover { color: #333; background: #e2e6ea; }
     </style>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
 
     <div class="login-box">
         <h2>Giriş Yap</h2>
-        
         <div class="input-group">
             <label>Kullanıcı Adı</label>
             <input type="text" id="kullanici" autocomplete="off">
         </div>
-        
         <div class="input-group">
             <label>Şifre</label>
             <input type="password" id="sifre">
@@ -128,29 +126,39 @@
 
         <button class="btn btn-primary" id="btnGiris" onclick="girisYapVeYonlendir()">Giriş Yap</button>
         <button class="btn btn-secondary" id="btnSifreKontrol" onclick="dogrulaVeModalAc()">Şifremi Değiştir</button>
-        
         <div class="message" id="mesaj"></div>
     </div>
 
     <div id="passwordModal" class="modal">
+        <div class="modal-content" style="text-align: left;"> <span class="close-btn" onclick="modalKapat('passwordModal')">&times;</span>
+            <h3 style="margin-top:0; color:#1e293b;">Yeni Şifre Belirle</h3>
+            <p style="color:#64748b; font-size:14px; margin-bottom:20px;">Hesabınız için güvenli bir şifre giriniz.</p>
+            
+            <div class="input-group">
+                <label>Yeni Şifre</label>
+                <input type="password" id="yeniSifre1">
+            </div>
+            <div class="input-group">
+                <label>Yeni Şifre (Tekrar)</label>
+                <input type="password" id="yeniSifre2">
+            </div>
+            
+            <button class="btn btn-primary" onclick="sifreyiGuncelle()">Şifreyi Güncelle</button>
+            <div id="modalMesaj" class="message" style="text-align: center;"></div>
+        </div>
+    </div>
+
+    <div id="successModal" class="modal">
         <div class="modal-content">
-            <div class="modal-header">
-                <h3>Yeni Şifre Belirle</h3>
-                <span class="close-btn" onclick="modalKapat()">&times;</span>
+            <div class="success-icon-circle">
+                ✓
             </div>
-            <div class="modal-body">
-                <p style="color:#666; font-size:14px; margin-bottom:20px;">Lütfen hesabınız için yeni ve güvenli bir şifre giriniz.</p>
-                <div class="input-group">
-                    <label>Yeni Şifre</label>
-                    <input type="password" id="yeniSifre1">
-                </div>
-                <div class="input-group">
-                    <label>Yeni Şifre (Tekrar)</label>
-                    <input type="password" id="yeniSifre2">
-                </div>
-                <button class="btn btn-primary" onclick="sifreyiGuncelle()">Şifreyi Güncelle</button>
-                <div id="modalMesaj" class="message" style="text-align: center;"></div>
+            <div class="success-title">Harika!</div>
+            <div class="success-desc">
+                Şifreniz başarıyla güncellendi.<br>
+                Yeni şifrenizi kullanarak sisteme giriş yapabilirsiniz.
             </div>
+            <button class="btn btn-primary" onclick="successKapat()">Tamam, Anlaşıldı</button>
         </div>
     </div>
 
@@ -165,10 +173,9 @@
         function girisYapVeYonlendir() {
             var k = document.getElementById("kullanici").value.trim();
             var s = document.getElementById("sifre").value.trim();
-            
             if(!validasyon(k, s)) return;
 
-            gosterMesaj("Giriş yapılıyor...", "blue");
+            gosterMesaj("Giriş yapılıyor...", "#3b82f6");
             butonlariKilitle(true);
 
             var formData = new FormData();
@@ -181,15 +188,14 @@
             .then(data => {
                 butonlariKilitle(false);
                 if(data.status === "basarili") {
-                    gosterMesaj("✅ Giriş Başarılı! Yönlendiriliyorsunuz...", "green");
+                    gosterMesaj("✅ Giriş Başarılı! Yönlendiriliyorsunuz...", "#16a34a");
                     setTimeout(() => { window.location.href = "talep-formu.html"; }, 1000);
                 } else {
-                    gosterMesaj("❌ " + data.message, "red");
+                    gosterMesaj("❌ " + data.message, "#ef4444");
                 }
             })
             .catch(err => {
-                console.error(err);
-                gosterMesaj("Bağlantı hatası!", "red");
+                gosterMesaj("Bağlantı hatası!", "#ef4444");
                 butonlariKilitle(false);
             });
         }
@@ -199,11 +205,10 @@
             var s = document.getElementById("sifre").value.trim();
 
             if(k === "" || s === "") {
-                gosterMesaj("Şifrenizi değiştirmek için önce mevcut kullanıcı adı ve şifrenizi girmelisiniz.", "red");
-                return;
+                gosterMesaj("Şifre değiştirmek için önce bilgilerinizi giriniz.", "#ef4444"); return;
             }
 
-            gosterMesaj("Kimlik doğrulanıyor...", "blue");
+            gosterMesaj("Kimlik doğrulanıyor...", "#3b82f6");
             butonlariKilitle(true);
 
             var formData = new FormData();
@@ -218,14 +223,13 @@
                 if(data.status === "basarili") {
                     gosterMesaj("", "black");
                     onaylanmisKullanici = k;
-                    modalAc(); // Modern modalı aç
+                    modalAc('passwordModal'); // Şifre formunu aç
                 } else {
-                    gosterMesaj("❌ Mevcut şifreniz veya kullanıcı adınız hatalı.", "red");
+                    gosterMesaj("❌ Bilgiler hatalı.", "#ef4444");
                 }
             })
             .catch(err => {
-                gosterMesaj("Bağlantı hatası!", "red");
-                butonlariKilitle(false);
+                gosterMesaj("Bağlantı hatası!", "#ef4444"); butonlariKilitle(false);
             });
         }
 
@@ -234,15 +238,10 @@
             var s2 = document.getElementById("yeniSifre2").value;
             var mMsg = document.getElementById("modalMesaj");
 
-            if (s1 === "" || s2 === "") {
-                mMsg.innerText = "Lütfen yeni şifreyi giriniz."; mMsg.style.color = "red"; return;
-            }
-            if (s1 !== s2) {
-                mMsg.innerText = "Şifreler uyuşmuyor!"; mMsg.style.color = "red"; return;
-            }
+            if (s1 === "" || s2 === "") { mMsg.innerText = "Şifre boş olamaz."; mMsg.style.color = "#ef4444"; return; }
+            if (s1 !== s2) { mMsg.innerText = "Şifreler uyuşmuyor!"; mMsg.style.color = "#ef4444"; return; }
 
-            mMsg.innerText = "Güncelleniyor...";
-            mMsg.style.color = "blue";
+            mMsg.innerText = "Güncelleniyor..."; mMsg.style.color = "#3b82f6";
 
             var formData = new FormData();
             formData.append("action", "sifreDegistir");
@@ -253,64 +252,63 @@
             .then(res => res.json())
             .then(data => {
                 if(data.status === "basarili") {
-                    mMsg.style.color = "green";
-                    mMsg.innerText = "✅ Şifre Başarıyla Güncellendi!";
-                    setTimeout(() => {
-                        alert("Şifreniz güncellendi. Yeni şifrenizle giriş yapabilirsiniz.");
-                        modalKapat();
-                        document.getElementById("sifre").value = "";
-                    }, 500);
+                    // Form modalını kapat
+                    modalKapat('passwordModal');
+                    // Başarı modalını aç (Modern Alert)
+                    setTimeout(() => { modalAc('successModal'); }, 300);
+                    
+                    document.getElementById("sifre").value = ""; // Eski şifreyi temizle
                 } else {
-                    mMsg.style.color = "red";
+                    mMsg.style.color = "#ef4444";
                     mMsg.innerText = data.message;
                 }
             })
-            .catch(err => {
-                mMsg.style.color = "red";
-                mMsg.innerText = "Hata oluştu.";
-            });
+            .catch(err => { mMsg.style.color = "#ef4444"; mMsg.innerText = "Hata oluştu."; });
         }
 
-        // --- YENİ MODAL FONKSİYONLARI (Animasyonlu) ---
-        function modalAc() {
-            var modal = document.getElementById("passwordModal");
+        // --- MODERN MODAL FONKSİYONLARI ---
+        function modalAc(modalId) {
+            var modal = document.getElementById(modalId);
             modal.style.display = "flex";
-            // Tarayıcının display:flex'i algılaması için minik bir gecikme
             setTimeout(() => { modal.classList.add("show"); }, 10);
             
-            document.getElementById("modalMesaj").innerText = "";
-            document.getElementById("yeniSifre1").value = "";
-            document.getElementById("yeniSifre2").value = "";
+            // Eğer form açılıyorsa temizle
+            if(modalId === 'passwordModal'){
+                document.getElementById("modalMesaj").innerText = "";
+                document.getElementById("yeniSifre1").value = "";
+                document.getElementById("yeniSifre2").value = "";
+            }
         }
 
-        function modalKapat() {
-            var modal = document.getElementById("passwordModal");
+        function modalKapat(modalId) {
+            var modal = document.getElementById(modalId);
             modal.classList.remove("show");
-            // Animasyon bitene kadar bekle sonra gizle
             setTimeout(() => { modal.style.display = "none"; }, 300);
         }
+        
+        // Başarı modalı kapanınca ne olsun?
+        function successKapat() {
+            modalKapat('successModal');
+        }
 
-        // YARDIMCI FONKSİYONLAR
+        // YARDIMCI
         function validasyon(k, s) {
-            if(k === "" || s === "") {
-                gosterMesaj("Lütfen kullanıcı adı ve şifreyi giriniz.", "red");
-                return false;
-            }
+            if(k === "" || s === "") { gosterMesaj("Kullanıcı adı ve şifre giriniz.", "#ef4444"); return false; }
             return true;
         }
         function gosterMesaj(yazi, renk) {
             var m = document.getElementById("mesaj"); m.innerText = yazi; m.style.color = renk;
         }
         function butonlariKilitle(durum) {
-            var btnG = document.getElementById("btnGiris");
-            var btnS = document.getElementById("btnSifreKontrol");
+            var btnG = document.getElementById("btnGiris"); var btnS = document.getElementById("btnSifreKontrol");
             btnG.disabled = durum; btnS.disabled = durum;
-            btnG.style.opacity = durum ? "0.7" : "1";
-            btnS.style.opacity = durum ? "0.7" : "1";
+            btnG.style.opacity = durum ? "0.7" : "1"; btnS.style.opacity = durum ? "0.7" : "1";
         }
         window.onclick = function(event) {
-            var modal = document.getElementById("passwordModal");
-            if (event.target == modal) modalKapat();
+            if (event.target.classList.contains('modal')) {
+                event.target.classList.remove("show");
+                setTimeout(() => { event.target.style.display = "none"; }, 300);
+            }
         }
     </script>
 
