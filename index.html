@@ -42,37 +42,31 @@
         .btn-primary {
             width: 100%;
             padding: 12px;
-            background-color: #007bff;
+            background-color: #007bff; /* Mavi */
             color: white;
             border: none;
             border-radius: 6px;
             font-size: 16px;
             cursor: pointer;
-            margin-top: 10px;
+            margin-top: 15px;
             font-weight: 600;
             transition: background 0.2s;
         }
         .btn-primary:hover { background-color: #0056b3; }
         
-        /* Pasif Buton Stili */
         .btn-secondary {
             width: 100%;
             padding: 12px;
-            background-color: #6c757d;
+            background-color: #6c757d; /* Gri */
             color: white;
             border: none;
             border-radius: 6px;
             font-size: 14px;
-            cursor: not-allowed;
-            margin-top: 10px;
-            opacity: 0.6;
-        }
-        .btn-secondary.active {
-            background-color: #17a2b8;
             cursor: pointer;
-            opacity: 1;
+            margin-top: 10px;
+            transition: background 0.2s;
         }
-        .btn-secondary.active:hover { background-color: #138496; }
+        .btn-secondary:hover { background-color: #5a6268; }
 
         .message { margin-top: 15px; font-size: 14px; min-height: 20px; font-weight: 500; }
 
@@ -80,7 +74,7 @@
         .modal {
             display: none; 
             position: fixed; 
-            z-index: 1; 
+            z-index: 100; 
             left: 0;
             top: 0;
             width: 100%; 
@@ -96,9 +90,12 @@
             width: 300px;
             text-align: center;
             box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: relative;
         }
         .close-btn {
-            float: right;
+            position: absolute;
+            top: 10px;
+            right: 15px;
             font-size: 24px;
             cursor: pointer;
             color: #aaa;
@@ -113,17 +110,17 @@
         
         <div class="input-group">
             <label>Kullanıcı Adı</label>
-            <input type="text" id="kullanici" placeholder="Örn: ahmet">
+            <input type="text" id="kullanici">
         </div>
         
         <div class="input-group">
             <label>Şifre</label>
-            <input type="password" id="sifre" placeholder="******">
+            <input type="password" id="sifre">
         </div>
 
-        <button class="btn-primary" id="btnGiris" onclick="girisYap()">Giriş Yap</button>
+        <button class="btn-primary" id="btnGiris" onclick="girisYapVeYonlendir()">Giriş Yap</button>
         
-        <button class="btn-secondary" id="btnSifreDegistir" onclick="modalAc()" disabled>Şifremi Değiştir</button>
+        <button class="btn-secondary" id="btnSifreKontrol" onclick="dogrulaVeModalAc()">Şifremi Değiştir</button>
         
         <div class="message" id="mesaj"></div>
     </div>
@@ -132,8 +129,14 @@
         <div class="modal-content">
             <span class="close-btn" onclick="modalKapat()">&times;</span>
             <h3>Yeni Şifre Belirle</h3>
-            <input type="password" id="yeniSifre1" placeholder="Yeni Şifre">
-            <input type="password" id="yeniSifre2" placeholder="Yeni Şifre (Tekrar)">
+            <div style="text-align:left; margin-top:10px;">
+                <label style="font-size:12px;">Yeni Şifre</label>
+                <input type="password" id="yeniSifre1">
+            </div>
+            <div style="text-align:left; margin-top:10px;">
+                <label style="font-size:12px;">Yeni Şifre (Tekrar)</label>
+                <input type="password" id="yeniSifre2">
+            </div>
             <button class="btn-primary" onclick="sifreyiGuncelle()">Güncelle</button>
             <div id="modalMesaj" class="message" style="color:red;"></div>
         </div>
@@ -141,127 +144,136 @@
 
     <script>
         // --- DÜZENLEME ALANI ---
-        // Apps Script'ten aldığın linki buraya yapıştır:
+        // Apps Script linkini buraya yapıştır:
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsTLjHARaLD8Zuhj6Ib-qIH0paFOyXJa8jNFOlv_c949yBQO1lUa4C8Ycg33D8mzyW/exec"; 
         // -----------------------
 
-        var girisYapanKullanici = ""; // Şifre değişimi için kullanıcı adını hafızada tutacağız
+        var onaylanmisKullanici = ""; // Doğrulama başarılı olursa buraya kaydedeceğiz
 
-        function girisYap() {
+        // FONKSİYON 1: Siteye Giriş Yap
+        function girisYapVeYonlendir() {
             var k = document.getElementById("kullanici").value.trim();
             var s = document.getElementById("sifre").value.trim();
-            var msg = document.getElementById("mesaj");
-            var btnGiris = document.getElementById("btnGiris");
-            var btnSifre = document.getElementById("btnSifreDegistir");
+            
+            if(!validasyon(k, s)) return;
 
-            if(k === "" || s === "") {
-                gosterMesaj("Lütfen tüm alanları doldurun.", "red");
-                return;
-            }
+            gosterMesaj("Giriş yapılıyor...", "blue");
+            butonlariKilitle(true);
 
-            gosterMesaj("Kontrol ediliyor...", "blue");
-            btnGiris.disabled = true;
-            btnGiris.innerText = "Bekleyiniz...";
-
-            // Veriyi hazırla (action: login)
             var formData = new FormData();
             formData.append("action", "login");
             formData.append("kullaniciAdi", k);
             formData.append("sifre", s);
 
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
+            fetch(SCRIPT_URL, { method: "POST", body: formData })
+            .then(res => res.json())
             .then(data => {
-                btnGiris.disabled = false;
-                btnGiris.innerText = "Giriş Yap";
-
+                butonlariKilitle(false);
                 if(data.status === "basarili") {
-                    gosterMesaj("✅ Giriş Başarılı! Şifrenizi değiştirebilirsiniz veya sisteme yönlendirileceksiniz...", "green");
-                    
-                    // Giriş başarılı olduğu için kullanıcıyı hafızaya al
-                    girisYapanKullanici = k;
-
-                    // Şifre Değiştir butonunu AKTİF yap
-                    btnSifre.disabled = false;
-                    btnSifre.classList.add("active");
-                    btnSifre.innerText = "🔓 Şifremi Şimdi Değiştir";
-
-                    // (İsteğe bağlı) 3 saniye sonra talep formuna yönlendirme yapabiliriz
-                    // setTimeout(() => { window.location.href = "talep-formu.html"; }, 3000);
+                    gosterMesaj("✅ Giriş Başarılı! Yönlendiriliyorsunuz...", "green");
+                    // 1 saniye sonra ana sayfaya at
+                    setTimeout(() => { 
+                        // Henüz talep-formu.html yapmadık ama linki burası olacak:
+                        window.location.href = "talep-formu.html"; 
+                    }, 1000);
                 } else {
                     gosterMesaj("❌ " + data.message, "red");
-                    // Hata varsa butonu tekrar pasif yap
-                    btnSifre.disabled = true;
-                    btnSifre.classList.remove("active");
-                    girisYapanKullanici = "";
                 }
             })
-            .catch(error => {
-                console.error("Hata:", error);
+            .catch(err => {
+                console.error(err);
                 gosterMesaj("Bağlantı hatası!", "red");
-                btnGiris.disabled = false;
-                btnGiris.innerText = "Giriş Yap";
+                butonlariKilitle(false);
             });
         }
 
-        // --- MODAL İŞLEMLERİ ---
-        function modalAc() {
-            document.getElementById("passwordModal").style.display = "flex";
-            document.getElementById("modalMesaj").innerText = "";
-            document.getElementById("yeniSifre1").value = "";
-            document.getElementById("yeniSifre2").value = "";
+        // FONKSİYON 2: Şifre Değiştirmek İçin Önce Doğrula
+        function dogrulaVeModalAc() {
+            var k = document.getElementById("kullanici").value.trim();
+            var s = document.getElementById("sifre").value.trim();
+
+            if(k === "" || s === "") {
+                gosterMesaj("Şifrenizi değiştirmek için önce mevcut kullanıcı adı ve şifrenizi girmelisiniz.", "red");
+                return;
+            }
+
+            gosterMesaj("Kimlik doğrulanıyor...", "blue");
+            butonlariKilitle(true);
+
+            var formData = new FormData();
+            formData.append("action", "login"); // Backend'deki login fonksiyonunu kullanıp doğruluyoruz
+            formData.append("kullaniciAdi", k);
+            formData.append("sifre", s);
+
+            fetch(SCRIPT_URL, { method: "POST", body: formData })
+            .then(res => res.json())
+            .then(data => {
+                butonlariKilitle(false);
+                if(data.status === "basarili") {
+                    gosterMesaj("", "black"); // Mesajı temizle
+                    onaylanmisKullanici = k; // Hafızaya al
+                    document.getElementById("passwordModal").style.display = "flex"; // Modalı aç
+                } else {
+                    gosterMesaj("❌ Mevcut şifreniz veya kullanıcı adınız hatalı. Değişiklik yapamazsınız.", "red");
+                }
+            })
+            .catch(err => {
+                gosterMesaj("Bağlantı hatası!", "red");
+                butonlariKilitle(false);
+            });
         }
 
-        function modalKapat() {
-            document.getElementById("passwordModal").style.display = "none";
-        }
-
+        // FONKSİYON 3: Yeni Şifreyi Kaydet
         function sifreyiGuncelle() {
             var s1 = document.getElementById("yeniSifre1").value;
             var s2 = document.getElementById("yeniSifre2").value;
             var mMsg = document.getElementById("modalMesaj");
 
             if (s1 === "" || s2 === "") {
-                mMsg.innerText = "Lütfen şifreleri giriniz.";
+                mMsg.innerText = "Lütfen yeni şifreyi giriniz.";
                 return;
             }
             if (s1 !== s2) {
                 mMsg.innerText = "Şifreler uyuşmuyor!";
                 return;
             }
-            
+
             mMsg.innerText = "Güncelleniyor...";
             mMsg.style.color = "blue";
 
-            // Şifre değiştirme isteği gönder (action: sifreDegistir)
             var formData = new FormData();
             formData.append("action", "sifreDegistir");
-            formData.append("kullaniciAdi", girisYapanKullanici); // Giriş yapmış kullanıcı
+            formData.append("kullaniciAdi", onaylanmisKullanici);
             formData.append("yeniSifre", s1);
 
-            fetch(SCRIPT_URL, {
-                method: "POST",
-                body: formData
-            })
-            .then(response => response.json())
+            fetch(SCRIPT_URL, { method: "POST", body: formData })
+            .then(res => res.json())
             .then(data => {
                 if(data.status === "basarili") {
                     mMsg.style.color = "green";
-                    mMsg.innerText = "✅ Şifre Başarıyla Güncellendi!";
-                    alert("Şifreniz güncellendi. Yeni şifrenizle tekrar giriş yapabilirsiniz.");
+                    mMsg.innerText = "✅ Şifre Değişti!";
+                    alert("Şifreniz başarıyla güncellendi. Yeni şifrenizle giriş yapabilirsiniz.");
                     modalKapat();
+                    // Kutucuktaki eski şifreyi temizle ki yenisini girsin
+                    document.getElementById("sifre").value = ""; 
                 } else {
                     mMsg.style.color = "red";
-                    mMsg.innerText = "Hata: " + data.message;
+                    mMsg.innerText = data.message;
                 }
             })
             .catch(err => {
                 mMsg.style.color = "red";
-                mMsg.innerText = "Bağlantı hatası.";
+                mMsg.innerText = "Hata oluştu.";
             });
+        }
+
+        // YARDIMCI FONKSİYONLAR
+        function validasyon(k, s) {
+            if(k === "" || s === "") {
+                gosterMesaj("Lütfen kullanıcı adı ve şifreyi giriniz.", "red");
+                return false;
+            }
+            return true;
         }
 
         function gosterMesaj(yazi, renk) {
@@ -270,12 +282,29 @@
             m.style.color = renk;
         }
 
-        // Modal dışına tıklayınca kapatma
+        function butonlariKilitle(durum) {
+            document.getElementById("btnGiris").disabled = durum;
+            document.getElementById("btnSifreKontrol").disabled = durum;
+            if(durum) {
+                document.getElementById("btnGiris").style.opacity = "0.7";
+                document.getElementById("btnSifreKontrol").style.opacity = "0.7";
+            } else {
+                document.getElementById("btnGiris").style.opacity = "1";
+                document.getElementById("btnSifreKontrol").style.opacity = "1";
+            }
+        }
+
+        function modalKapat() {
+            document.getElementById("passwordModal").style.display = "none";
+            document.getElementById("modalMesaj").innerText = "";
+            document.getElementById("yeniSifre1").value = "";
+            document.getElementById("yeniSifre2").value = "";
+        }
+
+        // Modal dışına tıklayınca kapat
         window.onclick = function(event) {
             var modal = document.getElementById("passwordModal");
-            if (event.target == modal) {
-                modalKapat();
-            }
+            if (event.target == modal) modalKapat();
         }
     </script>
 
