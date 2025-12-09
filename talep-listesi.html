@@ -20,7 +20,6 @@
         .btn-logout:hover { background: #fee2e2; }
 
         /* --- FULL WIDTH KONTEYNER --- */
-        /* Eski max-width: 1200px'i kaldırdık, artık %96 genişlikte */
         .container { width: 96%; max-width: 100%; margin: 30px auto; padding: 0; }
         
         .header-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
@@ -29,7 +28,7 @@
         .btn-new { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 12px 24px; border-radius: 10px; font-weight: 600; font-size: 15px; box-shadow: 0 4px 10px rgba(37,99,235,0.3); cursor: pointer; display: flex; align-items: center; gap: 8px; transition: transform 0.2s; }
         .btn-new:hover { transform: translateY(-2px); }
 
-        /* --- TABLO TASARIMI (GENİŞLETİLMİŞ) --- */
+        /* --- TABLO TASARIMI --- */
         .table-wrapper { background: white; border-radius: 16px; box-shadow: 0 10px 25px -5px rgba(0,0,0,0.05); padding: 25px; border: 1px solid #e2e8f0; }
         
         /* DataTables Ayarları */
@@ -40,12 +39,11 @@
         }
         table.dataTable tbody td { 
             padding: 16px 15px; font-size: 14px; border-bottom: 1px solid #f1f5f9; vertical-align: middle; 
-            line-height: 1.5; /* Satırları biraz açtık okunabilirlik için */
+            line-height: 1.5; 
         }
         
-        /* Kumaş sütunu uzun olduğu için ona özel ayar */
-        .col-kumas { min-width: 300px; max-width: 500px; white-space: normal !important; word-wrap: break-word; }
-        .col-kisa { white-space: nowrap; } /* Tarih ve No gibi alanlar kırılmasın */
+        .col-kumas { min-width: 250px; max-width: 450px; white-space: normal !important; word-wrap: break-word; }
+        .col-kisa { white-space: nowrap; }
 
         /* Arama Kutusu ve Sayfalama Stilleri */
         .dataTables_wrapper .dataTables_filter input { border: 2px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; outline: none; margin-left: 10px; transition: border 0.3s; }
@@ -59,7 +57,11 @@
         .badge-red { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
         .badge-islemde { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
 
-        /* --- FORM MODAL (Aynı Kalıyor) --- */
+        /* Buton: İncele */
+        .btn-detay { background-color: #f1f5f9; color: #334155; padding: 6px 12px; border-radius: 6px; text-decoration: none; font-weight: 600; font-size: 13px; transition: 0.2s; border: 1px solid #e2e8f0; }
+        .btn-detay:hover { background-color: #3b82f6; color: white; border-color: #3b82f6; }
+
+        /* --- FORM MODAL --- */
         .form-modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
         .form-modal.show { opacity: 1; }
         .form-content { background: #fff; width: 95%; max-width: 750px; border-radius: 20px; padding: 0; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: scale(0.95); transition: transform 0.3s; max-height: 95vh; display: flex; flex-direction: column; }
@@ -118,9 +120,11 @@
                         <th class="col-kisa">Tarih</th>
                         <th>Müşteri</th>
                         <th>Model</th>
-                        <th>Kumaş</th> <th>Renk</th>
+                        <th>Kumaş</th>
+                        <th>Renk</th>
                         <th style="text-align:center" class="col-kisa">Tur</th>
                         <th class="col-kisa">Durum</th>
+                        <th class="col-kisa" style="text-align:center;">İşlem</th>
                     </tr>
                 </thead>
                 <tbody id="tabloGovdesi"></tbody>
@@ -142,8 +146,12 @@
                     <div class="form-group" style="flex:1"><label class="form-label">Termin</label><input type="date" id="inpTermin" class="form-input"></div>
                 </div>
                 <div class="form-group"><label class="form-label">Genel Not</label><textarea id="inpGenelNot" class="form-textarea" rows="2"></textarea></div>
+                
                 <div class="renk-section">
-                    <div class="renk-header"><span style="font-weight:700;">Renkler</span><button class="btn-add-color" onclick="renkEkle()">+ Renk Ekle</button></div>
+                    <div class="renk-header">
+                        <span style="font-weight:700;">Renkler / Varyantlar</span>
+                        <button class="btn-add-color" onclick="renkEkle()">+ Renk Ekle</button>
+                    </div>
                     <div id="renkContainer"></div>
                 </div>
             </div>
@@ -167,11 +175,15 @@
         var currentUser = "", currentRole = "", musteriListesiCache = [], kumasListesiCache = [];
 
         window.onload = function() {
-            currentUser = localStorage.getItem("kullaniciAdi");
-            currentRole = localStorage.getItem("kullaniciTipi"); 
-            if (!currentUser) { window.location.href = "index.html"; return; }
-            document.getElementById("welcomeUser").innerText = currentUser + " (" + (currentRole||"User") + ")";
-            verileriGetir(); formDropdownlariDoldur();
+            try {
+                currentUser = localStorage.getItem("kullaniciAdi");
+                currentRole = localStorage.getItem("kullaniciTipi"); 
+                if (!currentUser) { window.location.href = "index.html"; return; }
+                document.getElementById("welcomeUser").innerText = currentUser + " (" + (currentRole||"User") + ")";
+                
+                verileriGetir();
+                formDropdownlariDoldur(); 
+            } catch(e) { console.error(e); }
         };
 
         function verileriGetir() {
@@ -179,10 +191,16 @@
             fetch(SCRIPT_URL, { method: "POST", body: fd }).then(r=>r.json()).then(d=>{
                 if ($.fn.DataTable.isDataTable('#talepTablosu')) { $('#talepTablosu').DataTable().destroy(); }
                 var tbody = document.getElementById("tabloGovdesi"), buf = "";
+                
                 if(d.data && d.data.length>0) {
                     d.data.forEach(i => {
                         var cls = i.durum.includes("Bekliyor")?"badge-bekliyor":"badge-okey";
-                        // Kumaş sütununa "col-kumas" sınıfı ekleyerek CSS ile yönetiyoruz
+                        if(i.durum.includes("Red")) cls="badge-red";
+                        if(i.durum.includes("İşlemde")) cls="badge-islemde";
+
+                        // DETAY BUTONU BURADA
+                        var btnHtml = `<button class="btn-detay" onclick="window.location.href='talep-detay.html?no=${i.talepNo}'">İncele</button>`;
+
                         buf += `<tr>
                             <td class="col-kisa" style="font-weight:700">${i.talepNo}</td>
                             <td class="col-kisa">${tarihFmt(i.tarih)}</td>
@@ -192,6 +210,7 @@
                             <td>${i.renk}</td>
                             <td style="text-align:center">${i.tur}</td>
                             <td><span class="badge ${cls}">${i.durum}</span></td>
+                            <td style="text-align:center">${btnHtml}</td>
                         </tr>`;
                     });
                 }
@@ -200,14 +219,17 @@
                 $('#talepTablosu').DataTable({
                     language: { url: '//cdn.datatables.net/plug-ins/1.13.6/i18n/tr.json' },
                     order: [[0, 'desc']],
-                    autoWidth: false, // CSS'in sözünü dinlesin diye bunu kapattık
+                    autoWidth: false,
                     columnDefs: [
-                        { width: "10%", targets: 0 }, // Talep No
-                        { width: "10%", targets: 1 }, // Tarih
-                        { width: "10%", targets: 2 }, // Müşteri
-                        { width: "15%", targets: 3 }, // Model
-                        { width: "35%", targets: 4 }, // Kumaş (En geniş yer)
-                        { width: "10%", targets: 5 }, // Renk
+                        { width: "8%", targets: 0 },
+                        { width: "8%", targets: 1 },
+                        { width: "10%", targets: 2 },
+                        { width: "12%", targets: 3 },
+                        { width: "30%", targets: 4 },
+                        { width: "10%", targets: 5 },
+                        { width: "5%", targets: 6 },
+                        { width: "8%", targets: 7 },
+                        { width: "8%", targets: 8, orderable: false }
                     ]
                 });
             }).catch(e => console.error(e));
@@ -218,34 +240,35 @@
             else modalAc();
         }
 
-        // --- DİĞER JS FONKSİYONLARI AYNEN KALIYOR ---
         function formDropdownlariDoldur() {
             var fd = new FormData(); fd.append("action", "getFormVerileri"); fd.append("kullaniciAdi", currentUser);
             fetch(SCRIPT_URL, { method: "POST", body: fd }).then(r=>r.json()).then(d=>{
                 if(d.status==="basarili"){
                     musteriListesiCache = d.data.musteriler || [];
-                    var mSel = document.getElementById("inpMusteri");
-                    var mOpt = "<option value=''>Seçiniz...</option>";
+                    var mSel = document.getElementById("inpMusteri"), mOpt = "<option value=''>Seçiniz...</option>";
                     musteriListesiCache.forEach(m => { mOpt += `<option value="${m.ad}">${m.ad}</option>`; });
                     mSel.innerHTML = mOpt;
-                    var kList = document.getElementById("kumasListesi");
-                    var kOpt = "";
+
+                    var kList = document.getElementById("kumasListesi"), kOpt = "";
                     if(d.data.kumaslar) d.data.kumaslar.forEach(k => { kOpt += `<option value="${k}">`; });
                     kList.innerHTML = kOpt;
                 }
             });
         }
+
         function musteriSecildi() {
             var ad = document.getElementById("inpMusteri").value;
             var obj = musteriListesiCache.find(m=>m.ad==ad);
             document.getElementById("inpPlanlamaci").value = obj ? (obj.planlamaci || "Belirtilmemiş") : "";
         }
+
         function renkEkle() {
             var id = Date.now();
             var div = document.createElement("div"); div.className = "renk-row"; div.id = "row-"+id;
             div.innerHTML = `<div style="flex:1"><label class="form-label">Renk Adı</label><input type="text" class="form-input inp-renk-ad" placeholder="Mavi"></div><div style="flex:1"><label class="form-label">Ref</label><input type="text" class="form-input inp-renk-ref" placeholder="P-123"></div><div style="flex:1.5"><label class="form-label">Not</label><input type="text" class="form-input inp-renk-not" placeholder="Not"></div><button class="btn-del-color" onclick="document.getElementById('row-${id}').remove()">&times;</button>`;
             document.getElementById("renkContainer").appendChild(div);
         }
+
         function kaydet() {
             var musteri = document.getElementById("inpMusteri").value;
             var model = document.getElementById("inpModel").value;
@@ -276,6 +299,7 @@
                 else showAlert("error", "Hata", d.message);
             }).catch(e=>{ btn.innerText="Kaydet"; btn.disabled=false; showAlert("error", "Hata", "Sunucu hatası."); });
         }
+
         function modalAc() {
             var m = document.getElementById("newRecordModal"); m.style.display="flex"; setTimeout(()=>m.classList.add("show"),10);
             document.getElementById("inpModel").value=""; document.getElementById("inpKumas").value=""; 
