@@ -4,94 +4,75 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Taleplerim</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         /* --- GENEL TASARIM --- */
-        body {
-            font-family: 'Inter', 'Segoe UI', sans-serif;
-            background-color: #f1f5f9;
-            margin: 0; padding: 0;
-            color: #334155;
-        }
-
-        /* Navbar (Üst Menü) */
-        .navbar {
-            background-color: #ffffff;
-            padding: 15px 20px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-            display: flex; justify-content: space-between; align-items: center;
-            position: sticky; top: 0; z-index: 50;
-        }
-        .nav-title { font-weight: 800; font-size: 18px; color: #0f172a; letter-spacing: -0.5px; }
-        .user-info { font-size: 14px; color: #64748b; display: flex; align-items: center; gap: 15px; }
-        .btn-logout { 
-            color: #ef4444; cursor: pointer; font-weight: 600; text-decoration: none; 
-            padding: 6px 12px; border-radius: 6px; transition: background 0.2s; background: #fef2f2;
-        }
-        .btn-logout:active { background-color: #fee2e2; transform: scale(0.95); }
-
-        /* Ana İçerik Kutusu */
-        .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
-
-        /* Başlık ve Buton Alanı */
-        .header-area { 
-            display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; 
-        }
-        .page-title { font-size: 22px; font-weight: 700; color: #1e293b; }
+        body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 0; color: #334155; }
         
+        /* Navbar */
+        .navbar { background: #fff; padding: 15px 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
+        .nav-title { font-weight: 800; font-size: 18px; color: #0f172a; }
+        .btn-logout { color: #ef4444; cursor: pointer; font-weight: 600; padding: 6px 12px; background: #fef2f2; border-radius: 6px; }
+
+        /* Konteyner */
+        .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
+        .header-area { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .page-title { font-size: 22px; font-weight: 700; color: #1e293b; }
+
         /* Yeni Kayıt Butonu */
-        .btn-new { 
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); 
-            color: white; padding: 12px 18px; 
-            border-radius: 10px; text-decoration: none; font-weight: 600; font-size: 14px;
-            box-shadow: 0 4px 6px rgba(37, 99, 235, 0.2); transition: transform 0.2s;
-            display: flex; align-items: center; gap: 6px; cursor: pointer;
-            -webkit-tap-highlight-color: transparent;
-        }
+        .btn-new { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 12px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 6px rgba(37,99,235,0.2); cursor: pointer; display: flex; align-items: center; gap: 6px; }
         .btn-new:active { transform: scale(0.96); }
 
-        /* --- TABLO TASARIMI (Excel Gibi & Responsive) --- */
-        .table-wrapper {
-            background: white; border-radius: 16px; 
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
-            overflow-x: auto; /* Mobilde yatay kaydırma */
-            border: 1px solid #e2e8f0;
-        }
+        /* Tablo */
+        .table-wrapper { background: white; border-radius: 16px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.05); overflow-x: auto; border: 1px solid #e2e8f0; }
+        table { width: 100%; border-collapse: collapse; min-width: 900px; }
+        th { background: #f8fafc; color: #475569; font-weight: 600; text-align: left; padding: 16px; border-bottom: 2px solid #e2e8f0; font-size: 12px; text-transform: uppercase; white-space: nowrap; }
+        td { padding: 16px; border-bottom: 1px solid #e2e8f0; font-size: 14px; }
         
-        table { width: 100%; border-collapse: collapse; min-width: 900px; /* Mobilde sıkışmasın diye min genişlik */ }
-        
-        th { 
-            background-color: #f8fafc; color: #475569; font-weight: 600; text-align: left; 
-            padding: 16px; border-bottom: 2px solid #e2e8f0; font-size: 12px; 
-            text-transform: uppercase; letter-spacing: 0.5px; white-space: nowrap;
-        }
-        td { padding: 16px; border-bottom: 1px solid #e2e8f0; color: #334155; font-size: 14px; vertical-align: middle; }
-        tr:last-child td { border-bottom: none; }
-        tr:hover { background-color: #f8fafc; }
+        /* Badge Renkleri */
+        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; }
+        .badge-bekliyor { background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; }
+        .badge-okey { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+        .badge-red { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
 
-        /* Link/Detay */
-        .link-detay { color: #3b82f6; font-weight: 600; text-decoration: none; cursor: pointer; }
-        
-        /* Durum Badge (Etiketleri) */
-        .badge { padding: 4px 10px; border-radius: 20px; font-size: 12px; font-weight: 700; white-space: nowrap; display: inline-block; }
-        .badge-bekliyor { background-color: #fffbeb; color: #b45309; border: 1px solid #fcd34d; }
-        .badge-okey { background-color: #dcfce7; color: #15803d; border: 1px solid #86efac; }
-        .badge-red { background-color: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
-        .badge-islemde { background-color: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
+        /* --- MODERN FORM MODAL (Yeni Kayıt) --- */
+        .form-modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
+        .form-modal.show { opacity: 1; }
+        .form-content { background: #fff; width: 100%; max-width: 500px; border-radius: 20px; padding: 0; box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25); transform: scale(0.95); transition: transform 0.3s; max-height: 90vh; display: flex; flex-direction: column; }
+        .form-modal.show .form-content { transform: scale(1); }
 
-        /* Mesaj Alanları */
-        .info-msg { text-align: center; padding: 40px; color: #64748b; font-weight: 500; }
+        .form-header { padding: 20px 25px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+        .form-title { font-size: 18px; font-weight: 700; color: #1e293b; }
+        .form-close { font-size: 24px; cursor: pointer; color: #94a3b8; line-height: 1; }
         
-        /* Mobilde Düzenlemeler */
-        @media (max-width: 480px) {
-            .navbar { padding: 12px 15px; }
-            .nav-title { font-size: 16px; }
-            .user-info span { display: none; } /* Mobilde ismi gizle, yer aç */
-            .page-title { font-size: 18px; }
-            .btn-new { padding: 10px 14px; }
-        }
+        .form-body { padding: 25px; overflow-y: auto; }
+        
+        /* Form Elemanları */
+        .form-group { margin-bottom: 15px; }
+        .form-label { display: block; font-size: 13px; font-weight: 600; color: #475569; margin-bottom: 6px; }
+        .form-input, .form-select, .form-textarea { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 10px; font-size: 15px; background: #f8fafc; box-sizing: border-box; font-family: 'Inter', sans-serif; }
+        .form-input:focus, .form-select:focus { border-color: #3b82f6; background: #fff; outline: none; }
+        .form-row { display: flex; gap: 15px; } /* Yan yana kutular için */
 
-        /* Font Yüklemesi */
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        .form-footer { padding: 20px 25px; border-top: 1px solid #e2e8f0; display: flex; justify-content: flex-end; gap: 10px; background: #f8fafc; border-radius: 0 0 20px 20px; }
+        .btn-cancel { padding: 12px 20px; border-radius: 10px; background: #e2e8f0; color: #475569; font-weight: 600; border: none; cursor: pointer; }
+        .btn-submit { padding: 12px 25px; border-radius: 10px; background: #3b82f6; color: white; font-weight: 600; border: none; cursor: pointer; box-shadow: 0 4px 6px rgba(59,130,246,0.2); }
+
+        /* --- MODERN ALERT MODAL (Uyarı/Başarı) --- */
+        .alert-modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.3); align-items: center; justify-content: center; }
+        .alert-content { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 350px; width: 90%; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.1); animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        
+        .alert-icon { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+        .icon-success { background: #dcfce7; color: #16a34a; }
+        .icon-error { background: #fee2e2; color: #dc2626; }
+        .icon-warning { background: #fef3c7; color: #d97706; }
+        
+        .alert-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 8px; }
+        .alert-msg { font-size: 14px; color: #64748b; line-height: 1.5; margin-bottom: 20px; }
+        .alert-btn { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; font-size: 15px; }
+        
+        @keyframes popIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @media (max-width: 480px) { .form-row { flex-direction: column; gap: 15px; } .btn-new span { display: none; } }
     </style>
 </head>
 <body>
@@ -100,15 +81,15 @@
         <div class="nav-title">Lab Takip</div>
         <div class="user-info">
             <span id="welcomeUser">...</span>
-            <a onclick="cikisYap()" class="btn-logout">Çıkış</a>
+            <div onclick="cikisYap()" class="btn-logout">Çıkış</div>
         </div>
     </div>
 
     <div class="container">
         <div class="header-area">
             <div class="page-title">Taleplerim</div>
-            <div class="btn-new" onclick="yeniKayitModalAc()">
-                <span style="font-size:18px; line-height:0; margin-bottom:2px;">+</span> Yeni Talep
+            <div class="btn-new" onclick="modalAc()">
+                <span>+</span> Yeni Talep
             </div>
         </div>
 
@@ -116,144 +97,284 @@
             <table id="talepTablosu">
                 <thead>
                     <tr>
-                        <th style="width: 90px;">Talep No</th>
-                        <th style="width: 100px;">Tarih</th>
+                        <th>Talep No</th>
+                        <th>Tarih</th>
                         <th>Müşteri</th>
                         <th>Model</th>
                         <th>Kumaş</th>
                         <th>Renk</th>
-                        <th style="text-align: center;">Tur</th>
+                        <th style="text-align:center">Tur</th>
                         <th>Durum</th>
-                        <th>İşlem</th>
                     </tr>
                 </thead>
                 <tbody id="tabloGovdesi">
-                    <tr>
-                        <td colspan="9" class="info-msg">
-                            <span style="display:inline-block; animation: pulse 1.5s infinite;">Veriler yükleniyor...</span>
-                        </td>
-                    </tr>
+                    <tr><td colspan="8" style="text-align:center; padding:30px; color:#94a3b8;">Yükleniyor...</td></tr>
                 </tbody>
             </table>
+        </div>
+    </div>
+
+    <div id="newRecordModal" class="form-modal">
+        <div class="form-content">
+            <div class="form-header">
+                <div class="form-title">Yeni Lab Talebi</div>
+                <div class="form-close" onclick="modalKapat()">&times;</div>
+            </div>
+            
+            <div class="form-body">
+                <div class="form-group">
+                    <label class="form-label">Müşteri</label>
+                    <select id="inpMusteri" class="form-select">
+                        <option value="">Yükleniyor...</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Model Adı</label>
+                    <input type="text" id="inpModel" class="form-input" placeholder="Örn: Basic T-Shirt">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Kumaş</label>
+                    <select id="inpKumas" class="form-select" onchange="kumasSecildi()">
+                        <option value="">Kumaş Seçiniz...</option>
+                    </select>
+                    <input type="hidden" id="inpKumasTanim">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group" style="flex:1">
+                        <label class="form-label">Termin Tarihi</label>
+                        <input type="date" id="inpTermin" class="form-input">
+                    </div>
+                </div>
+
+                <div style="border-top:1px solid #e2e8f0; margin:15px 0; padding-top:15px;">
+                    <div class="form-row">
+                        <div class="form-group" style="flex:1">
+                            <label class="form-label">Renk Adı</label>
+                            <input type="text" id="inpRenkAdi" class="form-input" placeholder="Örn: Navy Blue">
+                        </div>
+                        <div class="form-group" style="flex:1">
+                            <label class="form-label">Renk Referansı</label>
+                            <input type="text" id="inpRenkRef" class="form-input" placeholder="Pantone kodu vb.">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Notlar</label>
+                    <textarea id="inpNotlar" class="form-textarea" rows="2" placeholder="Lab için not..."></textarea>
+                </div>
+            </div>
+
+            <div class="form-footer">
+                <button class="btn-cancel" onclick="modalKapat()">İptal</button>
+                <button class="btn-submit" onclick="kaydet()">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="customAlert" class="alert-modal">
+        <div class="alert-content">
+            <div id="alertIcon" class="alert-icon">!</div>
+            <div id="alertTitle" class="alert-title">Başlık</div>
+            <div id="alertMsg" class="alert-msg">Mesaj</div>
+            <button id="alertBtn" class="alert-btn" onclick="closeAlert()">Tamam</button>
         </div>
     </div>
 
     <script src="config.js"></script>
 
     <script>
-        // Sayfa Yüklendiğinde Çalışır
-        window.onload = function() {
-            // 1. GÜVENLİK KONTROLÜ
-            var user = localStorage.getItem("kullaniciAdi");
-            if (!user) {
-                // Giriş yapmamışsa index.html'e şutla
-                window.location.href = "index.html";
-                return;
-            }
-            document.getElementById("welcomeUser").innerText = user;
+        var currentUser = "";
+        var kumasListesiCache = []; // Kumaş adlarını tutmak için
 
-            // 2. VERİLERİ GETİR
-            verileriGetir(user);
+        window.onload = function() {
+            currentUser = localStorage.getItem("kullaniciAdi");
+            if (!currentUser) { window.location.href = "index.html"; return; }
+            document.getElementById("welcomeUser").innerText = currentUser;
+            
+            verileriGetir();
+            formDropdownlariDoldur(); // Sayfa açılınca dropdownları hazırla
         };
 
-        function verileriGetir(kullaniciAdi) {
-            var formData = new FormData();
-            formData.append("action", "getKullaniciTalepleri");
-            formData.append("kullaniciAdi", kullaniciAdi);
+        // --- LİSTELEME ---
+        function verileriGetir() {
+            var fd = new FormData();
+            fd.append("action", "getKullaniciTalepleri");
+            fd.append("kullaniciAdi", currentUser);
 
-            // SCRIPT_URL artık config.js'den geliyor
-            fetch(SCRIPT_URL, { method: "POST", body: formData })
-            .then(res => res.json())
-            .then(data => {
+            fetch(SCRIPT_URL, { method: "POST", body: fd })
+            .then(r => r.json())
+            .then(d => {
                 var tbody = document.getElementById("tabloGovdesi");
-                tbody.innerHTML = ""; // Yükleniyor yazısını temizle
-
-                if (data.status === "basarili" && data.data && data.data.length > 0) {
-                    // VERİLERİ DÖNGÜYE AL
-                    data.data.forEach(item => {
-                        // Durum Rengi Belirleme Mantığı
-                        var durumClass = "badge-bekliyor"; 
-                        var d = (item.durum || "").toLowerCase();
+                tbody.innerHTML = "";
+                if (d.status === "basarili" && d.data.length > 0) {
+                    d.data.forEach(item => {
+                        var cls = "badge-bekliyor";
+                        var st = (item.durum||"").toLowerCase();
+                        if(st.includes("okey")) cls = "badge-okey";
+                        if(st.includes("red")) cls = "badge-red";
                         
-                        if(d.includes("okey") || d.includes("onay") || d.includes("tamam")) {
-                            durumClass = "badge-okey";
-                        }
-                        else if(d.includes("red") || d.includes("revize") || d.includes("iptal")) {
-                            durumClass = "badge-red";
-                        }
-                        else if(d.includes("işlem") || d.includes("laboratuvar") || d.includes("boya")) {
-                            durumClass = "badge-islemde";
-                        }
-
-                        var satir = `
-                            <tr>
-                                <td style="font-weight:700; color:#334155;">${item.talepNo}</td>
-                                <td>${tarihFormatla(item.tarih)}</td>
-                                <td>${item.musteri}</td>
-                                <td>${item.model}</td>
-                                <td>${item.kumas}</td>
-                                <td>${item.renk}</td>
-                                <td style="text-align:center;">
-                                    <span style="background:#f1f5f9; padding:2px 8px; border-radius:4px; font-weight:600; color:#64748b;">${item.tur}</span>
-                                </td>
-                                <td><span class="badge ${durumClass}">${item.durum || 'Bekliyor'}</span></td>
-                                <td>
-                                    <a class="link-detay" onclick="detayAc('${item.talepNo}')">Detay</a>
-                                </td>
-                            </tr>
-                        `;
-                        tbody.innerHTML += satir;
+                        tbody.innerHTML += `
+                        <tr>
+                            <td style="font-weight:700">${item.talepNo}</td>
+                            <td>${tarihFmt(item.tarih)}</td>
+                            <td>${item.musteri}</td>
+                            <td>${item.model}</td>
+                            <td>${item.kumas}</td>
+                            <td>${item.renk}</td>
+                            <td style="text-align:center">${item.tur}</td>
+                            <td><span class="badge ${cls}">${item.durum}</span></td>
+                        </tr>`;
                     });
                 } else {
-                    // LİSTE BOŞSA
-                    tbody.innerHTML = `
-                        <tr>
-                            <td colspan="9" class="info-msg">
-                                Henüz hiç talebiniz bulunmuyor.<br>
-                                <span style="font-size:13px; color:#94a3b8;">Yukarıdaki "+ Yeni Talep" butonuna basarak ilk kaydı oluşturabilirsiniz.</span>
-                            </td>
-                        </tr>`;
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px;">Kayıt yok.</td></tr>';
                 }
-            })
-            .catch(err => {
-                console.error(err);
-                document.getElementById("tabloGovdesi").innerHTML = `
-                    <tr><td colspan="9" class="info-msg" style="color:#ef4444;">
-                        Veriler alınırken bir hata oluştu!<br>
-                        <span style="font-size:12px;">Lütfen internet bağlantınızı kontrol edip sayfayı yenileyin.</span>
-                    </td></tr>`;
             });
         }
 
-        // Tarih Formatlama (YYYY-MM-DD -> DD.MM.YYYY)
-        function tarihFormatla(tarihStr) {
-            if(!tarihStr) return "";
-            var kisaTarih = tarihStr;
-            if(tarihStr.includes("T")) {
-                kisaTarih = tarihStr.split("T")[0];
+        // --- KAYDETME İŞLEMİ ---
+        function kaydet() {
+            // Validasyon
+            var musteri = document.getElementById("inpMusteri").value;
+            var kumas = document.getElementById("inpKumas").value;
+            var renk = document.getElementById("inpRenkAdi").value;
+
+            if(musteri === "" || kumas === "" || renk === "") {
+                showAlert("warning", "Eksik Bilgi", "Lütfen Müşteri, Kumaş ve Renk alanlarını doldurunuz.");
+                return;
             }
-            var parcalar = kisaTarih.split("-");
-            if(parcalar.length === 3) {
-                return parcalar[2] + "." + parcalar[1] + "." + parcalar[0];
-            }
-            return kisaTarih;
+
+            // Veriyi Hazırla
+            var fd = new FormData();
+            fd.append("action", "kaydet");
+            fd.append("temsilci", currentUser);
+            fd.append("musteri", musteri);
+            fd.append("model", document.getElementById("inpModel").value);
+            fd.append("kumasKod", kumas);
+            fd.append("kumasTanim", document.getElementById("inpKumasTanim").value);
+            fd.append("termin", document.getElementById("inpTermin").value);
+            fd.append("renkAdi", renk);
+            fd.append("renkRef", document.getElementById("inpRenkRef").value);
+            fd.append("notlar", document.getElementById("inpNotlar").value);
+
+            // Gönder
+            var btn = document.querySelector(".btn-submit");
+            btn.innerText = "Kaydediliyor...";
+            btn.disabled = true;
+
+            fetch(SCRIPT_URL, { method: "POST", body: fd })
+            .then(r => r.json())
+            .then(d => {
+                btn.innerText = "Kaydet";
+                btn.disabled = false;
+                
+                if(d.status === "basarili") {
+                    modalKapat();
+                    showAlert("success", "Başarılı", "Talep başarıyla oluşturuldu!\nNo: " + d.message.split(": ")[1]);
+                    verileriGetir(); // Tabloyu yenile
+                } else {
+                    showAlert("error", "Hata", d.message);
+                }
+            })
+            .catch(e => {
+                btn.innerText = "Kaydet";
+                btn.disabled = false;
+                showAlert("error", "Bağlantı Hatası", "Sunucuya ulaşılamadı.");
+            });
         }
 
-        function cikisYap() {
-            if(confirm("Çıkış yapmak istediğinize emin misiniz?")) {
-                localStorage.removeItem("kullaniciAdi");
-                window.location.href = "index.html";
+        // --- DROPDOWN DOLDURMA ---
+        function formDropdownlariDoldur() {
+            var fd = new FormData();
+            fd.append("action", "getFormVerileri");
+            fd.append("kullaniciAdi", currentUser);
+
+            fetch(SCRIPT_URL, { method: "POST", body: fd })
+            .then(r => r.json())
+            .then(d => {
+                if(d.status === "basarili") {
+                    // Müşteriler
+                    var mSel = document.getElementById("inpMusteri");
+                    mSel.innerHTML = '<option value="">Seçiniz...</option>';
+                    d.data.musteriler.forEach(m => {
+                        mSel.innerHTML += `<option value="${m}">${m}</option>`;
+                    });
+
+                    // Kumaşlar
+                    var kSel = document.getElementById("inpKumas");
+                    kumasListesiCache = d.data.kumaslar; // Hafızaya al
+                    kSel.innerHTML = '<option value="">Seçiniz...</option>';
+                    d.data.kumaslar.forEach(k => {
+                        kSel.innerHTML += `<option value="${k.kod}">${k.kod} - ${k.tanim}</option>`;
+                    });
+                }
+            });
+        }
+
+        function kumasSecildi() {
+            var kod = document.getElementById("inpKumas").value;
+            var tanimKutu = document.getElementById("inpKumasTanim");
+            var secilen = kumasListesiCache.find(k => k.kod == kod);
+            if(secilen) tanimKutu.value = secilen.tanim; // Tanımı gizli kutuya yaz
+        }
+
+        // --- MODERN UI FONKSİYONLARI ---
+        function modalAc() {
+            var m = document.getElementById("newRecordModal");
+            m.style.display = "flex";
+            setTimeout(() => m.classList.add("show"), 10);
+            
+            // Tarihi bugüne +7 gün ayarla (Varsayılan Termin)
+            var bugun = new Date();
+            bugun.setDate(bugun.getDate() + 7);
+            document.getElementById("inpTermin").valueAsDate = bugun;
+        }
+
+        function modalKapat() {
+            var m = document.getElementById("newRecordModal");
+            m.classList.remove("show");
+            setTimeout(() => m.style.display = "none", 300);
+        }
+
+        // MODERN ALERT SİSTEMİ (Standart alert yerine)
+        function showAlert(type, title, msg) {
+            var m = document.getElementById("customAlert");
+            var icon = document.getElementById("alertIcon");
+            var btn = document.getElementById("alertBtn");
+            
+            document.getElementById("alertTitle").innerText = title;
+            document.getElementById("alertMsg").innerText = msg;
+
+            // Reset Classes
+            icon.className = "alert-icon";
+            btn.style.background = "#334155";
+            btn.style.color = "white";
+
+            if(type === "success") {
+                icon.classList.add("icon-success");
+                icon.innerHTML = "✓";
+                btn.style.background = "#16a34a";
+            } else if(type === "error") {
+                icon.classList.add("icon-error");
+                icon.innerHTML = "✕";
+                btn.style.background = "#dc2626";
+            } else { // warning
+                icon.classList.add("icon-warning");
+                icon.innerHTML = "!";
+                btn.style.background = "#d97706";
             }
+
+            m.style.display = "flex";
         }
 
-        function yeniKayitModalAc() {
-            // Buraya bir sonraki adımda Modal Kodlarını ekleyeceğiz
-            alert("Sıradaki adım: Yeni Kayıt Modalı!");
+        function closeAlert() {
+            document.getElementById("customAlert").style.display = "none";
         }
 
-        function detayAc(no) {
-            alert(no + " nolu kaydın detay sayfası hazırlanıyor...");
-        }
+        function tarihFmt(s) { if(!s)return""; return s.split("T")[0].split("-").reverse().join("."); }
+        function cikisYap() { if(confirm("Çıkış?")) { localStorage.removeItem("kullaniciAdi"); window.location.href="index.html"; }}
     </script>
 </body>
 </html>
