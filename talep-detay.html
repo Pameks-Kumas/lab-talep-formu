@@ -11,15 +11,15 @@
         /* --- GENEL TASARIM --- */
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #334155; }
         
-        /* Navbar benzeri üst bar */
+        /* Navbar */
         .top-bar { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
-        .btn-back { background: #e2e8f0; color: #475569; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; font-size: 14px; display: flex; align-items: center; gap: 5px; }
+        .btn-back { background: #e2e8f0; color: #475569; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; font-size: 14px; }
         .btn-back:hover { background: #cbd5e1; }
 
         /* Ana Kutu */
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
         
-        /* HEADER (Başlık ve Durum) */
+        /* HEADER */
         .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
         .title-area h1 { margin: 0; font-size: 24px; color: #1e293b; letter-spacing: -0.5px; }
         .subtitle { font-size: 13px; color: #64748b; margin-top: 5px; display: block; }
@@ -31,12 +31,12 @@
         .badge-okey { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
         .badge-red { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
 
-        /* BİLGİ IZGARASI (Read Only) */
+        /* BİLGİ IZGARASI */
         .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 30px; }
         .info-item label { display: block; font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
         .info-item div { font-size: 15px; font-weight: 600; color: #0f172a; border-bottom: 1px solid #f1f5f9; padding-bottom: 8px; }
         
-        /* Not Alanı Özel */
+        /* Not Alanı */
         .note-box { background: #fffbeb; padding: 15px; border-radius: 12px; border: 1px solid #fef3c7; color: #92400e; font-size: 14px; line-height: 1.5; margin-bottom: 30px; }
         .note-title { font-weight: 700; font-size: 12px; margin-bottom: 5px; display: block; color: #b45309; text-transform: uppercase; }
 
@@ -55,26 +55,32 @@
         .actions { margin-top: 25px; display: flex; justify-content: flex-end; }
         .btn { padding: 12px 24px; border-radius: 10px; font-weight: 600; cursor: pointer; border: none; font-size: 14px; transition: transform 0.1s; display: flex; align-items: center; gap: 8px; }
         .btn:active { transform: scale(0.98); }
-        
         .btn-save { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
         
-        /* ONAY ALANI (Admin/Temsilci) */
+        /* ONAY ALANI */
         .approval-area { margin-top: 40px; padding-top: 30px; border-top: 2px dashed #e2e8f0; display: none; }
         .approval-buttons { display: flex; gap: 15px; margin-top: 15px; }
         .btn-approve { background: #16a34a; color: white; flex: 1; justify-content: center; font-size: 16px; padding: 15px; }
         .btn-reject { background: #dc2626; color: white; flex: 1; justify-content: center; font-size: 16px; padding: 15px; }
 
-        @media (max-width: 600px) { 
-            .form-row { flex-direction: column; gap: 15px; } 
-            .header { flex-direction: column; } 
-            .badge { width: 100%; text-align: center; box-sizing: border-box; }
-        }
+        /* --- MODERN MODALS --- */
+        .custom-modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); backdrop-filter: blur(3px); align-items: center; justify-content: center; }
+        .custom-modal-content { background: white; padding: 30px; border-radius: 20px; text-align: center; max-width: 400px; width: 90%; box-shadow: 0 20px 40px rgba(0,0,0,0.2); animation: popIn 0.3s; }
+        .modal-icon { width: 60px; height: 60px; border-radius: 50%; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 30px; }
+        .modal-title { font-size: 18px; font-weight: 700; color: #1e293b; margin-bottom: 10px; }
+        .modal-text { font-size: 14px; color: #64748b; line-height: 1.5; margin-bottom: 20px; }
+        .modal-actions { display: flex; gap: 10px; justify-content: center; }
+        .btn-modal { flex: 1; padding: 12px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; }
+        .btn-cancel-modal { background: #e2e8f0; color: #475569; }
+        
+        @keyframes popIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        @media (max-width: 600px) { .form-row { flex-direction: column; gap: 15px; } .header { flex-direction: column; } }
     </style>
 </head>
 <body>
 
     <div class="top-bar">
-        <a href="talep-listesi.html" class="btn-back">← Listeye Dön</a>
+        <button class="btn-back" onclick="window.location.href='talep-listesi.html'">← Listeye Dön</button>
         <div style="font-size:13px; color:#94a3b8;" id="userDisplay">...</div>
     </div>
 
@@ -82,7 +88,7 @@
         <div class="header">
             <div class="title-area">
                 <h1 id="lblTalepNo">Yükleniyor...</h1>
-                <span class="subtitle">Kayıt Tarihi: <span id="lblTarih">-</span> | Tur: <span id="lblTur">-</span></span>
+                <span class="subtitle">Tarih: <span id="lblTarih">-</span> | Tur: <span id="lblTur">-</span></span>
             </div>
             <div id="lblDurum" class="badge">...</div>
         </div>
@@ -116,7 +122,7 @@
             
             <div class="form-group" style="margin-bottom:20px;">
                 <label>Seçilen Reçete / Lab No</label>
-                <input type="text" id="inpRecete" class="form-input" placeholder="Onaylanan reçete numarası buraya...">
+                <input type="text" id="inpRecete" class="form-input" readonly style="background-color:#e2e8f0; color:#64748b;" placeholder="Müşteri onaylayınca burası dolacak...">
             </div>
             
             <div class="form-group">
@@ -126,7 +132,7 @@
             
             <div class="actions">
                 <button class="btn btn-save" onclick="labKaydet()">
-                    <span>💾</span> Bilgileri Kaydet
+                    <span>💾</span> Lab Bilgilerini Kaydet
                 </button>
             </div>
         </div>
@@ -136,11 +142,48 @@
             <p style="font-size:14px; color:#64748b;">Lab sonuçlarını inceledikten sonra karar veriniz.</p>
             
             <div class="approval-buttons">
-                <button class="btn btn-approve" onclick="durumDegistir('Okey')">✅ ONAYLA</button>
-                <button class="btn btn-reject" onclick="durumDegistir('Red')">❌ RED / REVİZE</button>
+                <button class="btn btn-approve" onclick="onayPenceresiniAc()">✅ ONAYLA</button>
+                <button class="btn btn-reject" onclick="redOnayiIste()">❌ RED / REVİZE</button>
             </div>
         </div>
+    </div>
 
+    <div id="alertModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <div id="alertIcon" class="modal-icon">!</div>
+            <div id="alertTitle" class="modal-title"></div>
+            <div id="alertMsg" class="modal-text"></div>
+            <button class="btn btn-modal" style="background:#334155; color:white;" onclick="closeModal('alertModal')">Tamam</button>
+        </div>
+    </div>
+
+    <div id="rejectModal" class="custom-modal">
+        <div class="custom-modal-content">
+            <div class="modal-icon" style="background:#fee2e2; color:#dc2626;">?</div>
+            <div class="modal-title">Revize Onayı</div>
+            <div class="modal-text">Bu talebi <b>REDDETMEK (Revize)</b> üzeresiniz.<br>Mevcut kayıt arşivlenecek ve yeni tur başlayacak.</div>
+            <div class="modal-actions">
+                <button class="btn btn-modal btn-cancel-modal" onclick="closeModal('rejectModal')">İptal</button>
+                <button class="btn btn-modal" style="background:#dc2626; color:white;" onclick="reddetIslemi()">Evet, Reddet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="approveModal" class="custom-modal">
+        <div class="custom-modal-content" style="text-align:left;">
+            <div class="modal-title" style="text-align:center; color:#16a34a;">Talebi Onayla</div>
+            <p class="modal-text" style="text-align:center;">Lütfen onaylanan varyantı / reçeteyi giriniz.</p>
+            
+            <div class="form-group">
+                <label>Onaylanan Varyant (Reçete No)</label>
+                <input type="text" id="inpApproveRecete" class="form-input" placeholder="Örn: V2 veya Rec-101">
+            </div>
+
+            <div class="modal-actions" style="margin-top:20px;">
+                <button class="btn btn-modal btn-cancel-modal" onclick="closeModal('approveModal')">İptal</button>
+                <button class="btn btn-modal" style="background:#16a34a; color:white;" onclick="onaylaIslemi()">Onayla ve Bitir</button>
+            </div>
+        </div>
     </div>
 
     <script src="config.js"></script>
@@ -152,9 +195,9 @@
 
         window.onload = function() {
             if(!currentUser) window.location.href="index.html";
-            document.getElementById("userDisplay").innerText = currentUser + " (" + (currentRole||"User") + ")";
+            document.getElementById("userDisplay").innerText = currentUser + " (" + (currentRole||"") + ")";
 
-            // URL'den ID'yi al (?no=TLP-XXXX)
+            // URL'den ID'yi al
             var urlParams = new URLSearchParams(window.location.search);
             talepNo = urlParams.get('no');
             
@@ -169,7 +212,6 @@
 
         function detayGetir() {
             document.getElementById("lblTalepNo").innerText = talepNo + "...";
-            
             var fd = new FormData();
             fd.append("action", "getTalepDetay");
             fd.append("talepNo", talepNo);
@@ -180,10 +222,10 @@
                 if(d.status === "basarili") {
                     doldur(d.data);
                 } else {
-                    alert("Veri çekilemedi: " + d.message);
+                    showAlert("error", "Hata", d.message);
                 }
             })
-            .catch(e => alert("Bağlantı hatası!"));
+            .catch(e => showAlert("error", "Hata", "Bağlantı sorunu!"));
         }
 
         function doldur(data) {
@@ -197,8 +239,8 @@
             dBadge.innerText = data.durum;
             dBadge.className = "badge"; // Reset
             if(data.durum.includes("Bekliyor")) dBadge.classList.add("badge-bekliyor");
-            else if(data.durum.includes("Okey") || data.durum.includes("Onay")) dBadge.classList.add("badge-okey");
-            else if(data.durum.includes("Red") || data.durum.includes("Revize")) dBadge.classList.add("badge-red");
+            else if(data.durum.includes("Okey")) dBadge.classList.add("badge-okey");
+            else if(data.durum.includes("Red")) dBadge.classList.add("badge-red");
             else dBadge.classList.add("badge-islemde");
 
             // Bilgiler
@@ -213,10 +255,10 @@
             // Lab Formu Doldur (Varsa eski veriler)
             document.getElementById("inpBoyahane").value = data.boyahane || "";
             document.getElementById("inpVaryant").value = data.varyantlar || "";
-            document.getElementById("inpRecete").value = data.recete || "";
+            document.getElementById("inpRecete").value = data.recete || ""; // Readonly
             document.getElementById("inpLabNot").value = data.labAciklama || "";
             
-            // Tarih inputları için format (YYYY-MM-DD)
+            // Tarih inputları (YYYY-MM-DD)
             if(data.gidenTarih) document.getElementById("inpGiden").value = inputTarihFormat(data.gidenTarih);
             if(data.gelenTarih) document.getElementById("inpGelen").value = inputTarihFormat(data.gelenTarih);
 
@@ -242,50 +284,81 @@
             fd.append("gidenTarih", document.getElementById("inpGiden").value);
             fd.append("gelenTarih", document.getElementById("inpGelen").value);
             fd.append("varyantlar", document.getElementById("inpVaryant").value);
-            fd.append("recete", document.getElementById("inpRecete").value);
+            // Recete'yi buradan göndermiyoruz, onayda dolacak
             fd.append("labAciklama", document.getElementById("inpLabNot").value);
 
             fetch(SCRIPT_URL, { method: "POST", body: fd })
             .then(r => r.json())
             .then(d => {
-                alert(d.message);
-                btn.innerHTML = "<span>💾</span> Bilgileri Kaydet"; btn.disabled = false;
-                detayGetir(); // Verileri tazele (Durum 'İşlemde' olduysa gör)
+                showAlert("success", "Başarılı", "Lab verileri güncellendi.");
+                btn.innerHTML = "<span>💾</span> Lab Bilgilerini Kaydet"; btn.disabled = false;
+                detayGetir(); // Verileri tazele
             })
-            .catch(e => { alert("Hata oluştu."); btn.disabled = false; });
+            .catch(e => { showAlert("error", "Hata", "Kaydedilemedi."); btn.disabled = false; });
         }
 
-        // --- DURUM GÜNCELLE (ONAY / RED) ---
-        function durumDegistir(yeniDurum) {
-            var mesaj = yeniDurum === "Okey" ? "Bu talebi ONAYLAMAK istediğinize emin misiniz?" : "Bu talebi REDDETMEK (Revize) istediğinize emin misiniz?";
-            if(!confirm(mesaj)) return;
+        // --- MODERN ONAY SÜRECİ ---
+        function onayPenceresiniAc() {
+            document.getElementById("inpApproveRecete").value = ""; // Temizle
+            document.getElementById("approveModal").style.display = "flex";
+        }
 
+        function onaylaIslemi() {
+            var recete = document.getElementById("inpApproveRecete").value;
+            if(!recete) { showAlert("warning", "Eksik Bilgi", "Lütfen onaylanan reçete numarasını yazınız!"); return; }
+
+            closeModal('approveModal');
+            
             var fd = new FormData();
             fd.append("action", "talepGuncelle");
             fd.append("islemTuru", "durumGuncelle");
             fd.append("talepNo", talepNo);
-            fd.append("yeniDurum", yeniDurum);
+            fd.append("yeniDurum", "Okey");
+            fd.append("secilenRecete", recete); // Backend'e gönderiyoruz
+            fd.append("kullaniciAdi", currentUser);
 
-            fetch(SCRIPT_URL, { method: "POST", body: fd })
-            .then(r => r.json())
-            .then(d => {
-                alert(d.message);
-                detayGetir(); // Ekranı yenile
+            fetch(SCRIPT_URL, { method: "POST", body: fd }).then(r=>r.json()).then(d=>{
+                showAlert("success", "Harika!", "Talep başarıyla ONAYLANDI.");
+                detayGetir();
             });
         }
 
-        // --- YARDIMCILAR ---
-        function tarihFormatla(isoStr) {
-            if(!isoStr) return "-";
-            // 2025-12-01T00:00... -> 01.12.2025
-            try { return isoStr.split("T")[0].split("-").reverse().join("."); } catch(e){ return isoStr; }
+        function redOnayiIste() {
+            document.getElementById("rejectModal").style.display = "flex";
         }
 
-        function inputTarihFormat(isoStr) {
-            if(!isoStr) return "";
-            // Input value için YYYY-MM-DD lazım
-            try { return isoStr.split("T")[0]; } catch(e){ return ""; }
+        function reddetIslemi() {
+            closeModal('rejectModal');
+            var fd = new FormData();
+            fd.append("action", "talepGuncelle");
+            fd.append("islemTuru", "durumGuncelle");
+            fd.append("talepNo", talepNo);
+            fd.append("yeniDurum", "Red");
+            fd.append("kullaniciAdi", currentUser);
+
+            fetch(SCRIPT_URL, { method: "POST", body: fd }).then(r=>r.json()).then(d=>{
+                showAlert("info", "Bilgi", "Talep revize edildi ve yeni tura geçildi.");
+                detayGetir();
+            });
         }
+
+        // --- MODAL & ALERT YÖNETİMİ ---
+        function showAlert(type, title, msg) {
+            var m = document.getElementById("alertModal");
+            var icon = document.getElementById("alertIcon");
+            var btn = document.querySelector("#alertModal .btn-modal");
+            document.getElementById("alertTitle").innerText = title;
+            document.getElementById("alertMsg").innerText = msg;
+            
+            if(type==="success") { icon.innerText="✓"; icon.style.background="#dcfce7"; icon.style.color="#16a34a"; btn.style.background="#16a34a"; }
+            else if(type==="error") { icon.innerText="✕"; icon.style.background="#fee2e2"; icon.style.color="#dc2626"; btn.style.background="#dc2626"; }
+            else { icon.innerText="!"; icon.style.background="#fef3c7"; icon.style.color="#d97706"; btn.style.background="#d97706"; }
+            
+            m.style.display = "flex";
+        }
+        function closeModal(id) { document.getElementById(id).style.display = "none"; }
+        function tarihFormatla(s) { if(!s)return"-"; try{return s.split("T")[0].split("-").reverse().join(".");}catch(e){return s;} }
+        function inputTarihFormat(s) { if(!s)return""; try{return s.split("T")[0];}catch(e){return"";} }
     </script>
 
 </body>
