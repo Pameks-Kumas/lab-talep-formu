@@ -156,7 +156,6 @@
             formData.append("kullaniciAdi", k);
             formData.append("sifre", s);
 
-            // SCRIPT_URL değişkeni artık config.js dosyasından geliyor
             fetch(SCRIPT_URL, { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
@@ -164,8 +163,15 @@
                 if(data.status === "basarili") {
                     gosterMesaj("✅ Giriş Başarılı! Yönlendiriliyorsunuz...", "#16a34a");
                     
-                    // Kullanıcıyı hafızaya al ve yönlendir
+                    // --- BURASI GÜNCELLENDİ: Rolü de kaydediyoruz ---
                     localStorage.setItem("kullaniciAdi", k);
+                    
+                    // Backend'den gelen veri yapısı: { status: "basarili", message: "...", data: { ad: "...", tip: "..." } }
+                    if (data.data && data.data.tip) {
+                        localStorage.setItem("kullaniciTipi", data.data.tip);
+                    }
+                    // ------------------------------------------------
+
                     setTimeout(() => { window.location.href = "talep-listesi.html"; }, 1000);
                 } else {
                     gosterMesaj("❌ " + data.message, "#ef4444");
