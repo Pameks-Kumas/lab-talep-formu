@@ -12,7 +12,8 @@
         /* Navbar */
         .navbar { background: #fff; padding: 15px 20px; box-shadow: 0 4px 6px -1px rgba(0,0,0,0.05); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
         .nav-title { font-weight: 800; font-size: 18px; color: #0f172a; }
-        .btn-logout { color: #ef4444; cursor: pointer; font-weight: 600; padding: 6px 12px; background: #fef2f2; border-radius: 6px; }
+        .btn-logout { color: #ef4444; cursor: pointer; font-weight: 600; padding: 6px 12px; background: #fef2f2; border-radius: 6px; transition: background 0.2s; }
+        .btn-logout:active { background: #fee2e2; }
 
         /* Konteyner */
         .container { max-width: 1200px; margin: 25px auto; padding: 0 15px; }
@@ -20,7 +21,7 @@
         .page-title { font-size: 22px; font-weight: 700; color: #1e293b; }
 
         /* Yeni Kayıt Butonu */
-        .btn-new { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 12px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 6px rgba(37,99,235,0.2); cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .btn-new { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; padding: 12px 18px; border-radius: 10px; font-weight: 600; font-size: 14px; box-shadow: 0 4px 6px rgba(37,99,235,0.2); cursor: pointer; display: flex; align-items: center; gap: 6px; transition: transform 0.2s; }
         .btn-new:active { transform: scale(0.96); }
 
         /* Tablo */
@@ -81,7 +82,7 @@
     <div class="navbar">
         <div class="nav-title">Lab Takip</div>
         <div class="user-info">
-            <span id="welcomeUser">...</span>
+            <span id="welcomeUser" style="margin-right: 10px;">...</span>
             <div onclick="cikisYap()" class="btn-logout">Çıkış</div>
         </div>
     </div>
@@ -89,7 +90,7 @@
     <div class="container">
         <div class="header-area">
             <div class="page-title">Taleplerim</div>
-            <div class="btn-new" onclick="modalAc()">
+            <div class="btn-new" onclick="yeniKayitKontrol()">
                 <span>+</span> Yeni Talep
             </div>
         </div>
@@ -189,23 +190,40 @@
 
     <script>
         var currentUser = "";
+        var currentRole = "";
         var kumasListesiCache = []; 
         var musteriListesiCache = []; 
 
         window.onload = function() {
-            // Hata korumalı başlangıç
             try {
+                // Giriş Kontrolü
                 currentUser = localStorage.getItem("kullaniciAdi");
+                currentRole = localStorage.getItem("kullaniciTipi"); // Rolü al
+                
                 if (!currentUser) { window.location.href = "index.html"; return; }
-                document.getElementById("welcomeUser").innerText = currentUser;
+                
+                // Rolü de ekrana yazalım
+                var roleText = currentRole ? " (" + currentRole + ")" : "";
+                document.getElementById("welcomeUser").innerText = currentUser + roleText;
                 
                 verileriGetir();
                 formDropdownlariDoldur(); 
             } catch(e) {
                 console.error("Başlangıç hatası:", e);
-                alert("Bir hata oluştu. Lütfen sayfayı yenileyin.");
+                alert("Bir hata oluştu. Sayfayı yenileyin.");
             }
         };
+
+        // --- YENİ KAYIT YETKİ KONTROLÜ ---
+        function yeniKayitKontrol() {
+            // Eğer rol "Kumaş Planlama" ise ENGELLE
+            if (currentRole === "Kumaş Planlama") {
+                showAlert("warning", "Yetkisiz İşlem", "Kumaş Planlama kullanıcıları yeni talep açamaz.\nSadece Müşteri Temsilcileri yetkilidir.");
+            } else {
+                // Değilse (Admin veya Temsilci) Modalı Aç
+                modalAc();
+            }
+        }
 
         // --- LİSTELEME ---
         function verileriGetir() {
@@ -248,11 +266,11 @@
             })
             .catch(err => {
                 console.error("Liste Hatası:", err);
-                document.getElementById("tabloGovdesi").innerHTML = '<tr><td colspan="8" style="color:red; text-align:center;">Veri alınamadı. İnternetinizi kontrol edin.</td></tr>';
+                document.getElementById("tabloGovdesi").innerHTML = '<tr><td colspan="8" style="color:red; text-align:center;">Veri alınamadı.</td></tr>';
             });
         }
 
-        // --- DROPDOWN DOLDURMA (HATA KORUMALI) ---
+        // --- DROPDOWN ---
         function formDropdownlariDoldur() {
             var fd = new FormData();
             fd.append("action", "getFormVerileri");
@@ -268,11 +286,9 @@
                     mSel.innerHTML = '<option value="">Seçiniz...</option>';
                     
                     musteriListesiCache.forEach(m => {
-                        // HEM String HEM Obje desteği (Eski/Yeni sürüm fark etmez)
                         var ad = "";
                         if (typeof m === 'object' && m !== null) { ad = m.ad; } 
-                        else { ad = m; } // String ise
-                        
+                        else { ad = m; } 
                         if(ad) mSel.innerHTML += `<option value="${ad}">${ad}</option>`;
                     });
 
@@ -294,12 +310,10 @@
             var secilenAd = document.getElementById("inpMusteri").value;
             var sorumluKutu = document.getElementById("inpSorumlu");
             
-            // Güvenli arama
             var musteriObj = null;
             if (musteriListesiCache.length > 0 && typeof musteriListesiCache[0] === 'object') {
                  musteriObj = musteriListesiCache.find(m => m.ad == secilenAd);
             }
-
             if (musteriObj) {
                 sorumluKutu.value = musteriObj.sorumlu; 
             } else {
@@ -350,7 +364,6 @@
                 
                 if(d.status === "basarili") {
                     modalKapat();
-                    // Mesajın içinden Talep No'yu çekmeye çalışalım
                     var msg = d.message || "Başarılı";
                     showAlert("success", "Harika!", "Talep başarıyla oluşturuldu.\n" + msg);
                     verileriGetir(); 
@@ -361,7 +374,7 @@
             .catch(e => {
                 btn.innerText = "Kaydet";
                 btn.disabled = false;
-                showAlert("error", "Bağlantı Hatası", "Sunucuya ulaşılamadı. Lütfen internetinizi kontrol edin.");
+                showAlert("error", "Bağlantı Hatası", "Sunucuya ulaşılamadı.");
             });
         }
 
@@ -396,7 +409,7 @@
 
         function closeAlert() { document.getElementById("customAlert").style.display = "none"; }
         function tarihFmt(s) { if(!s)return""; try{ return s.split("T")[0].split("-").reverse().join("."); }catch(e){return s;} }
-        function cikisYap() { if(confirm("Çıkış?")) { localStorage.removeItem("kullaniciAdi"); window.location.href="index.html"; }}
+        function cikisYap() { if(confirm("Çıkış?")) { localStorage.clear(); window.location.href="index.html"; }}
     </script>
 </body>
 </html>
