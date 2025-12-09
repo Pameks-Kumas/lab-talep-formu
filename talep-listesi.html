@@ -34,6 +34,7 @@
         .badge-bekliyor { background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; }
         .badge-okey { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
         .badge-red { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
+        .badge-islemde { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
 
         /* --- MODERN FORM MODAL --- */
         .form-modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); align-items: center; justify-content: center; opacity: 0; transition: opacity 0.3s; }
@@ -189,15 +190,21 @@
     <script>
         var currentUser = "";
         var kumasListesiCache = []; 
-        var musteriListesiCache = []; // Müşterileri de hafızaya alacağız
+        var musteriListesiCache = []; 
 
         window.onload = function() {
-            currentUser = localStorage.getItem("kullaniciAdi");
-            if (!currentUser) { window.location.href = "index.html"; return; }
-            document.getElementById("welcomeUser").innerText = currentUser;
-            
-            verileriGetir();
-            formDropdownlariDoldur(); 
+            // Hata korumalı başlangıç
+            try {
+                currentUser = localStorage.getItem("kullaniciAdi");
+                if (!currentUser) { window.location.href = "index.html"; return; }
+                document.getElementById("welcomeUser").innerText = currentUser;
+                
+                verileriGetir();
+                formDropdownlariDoldur(); 
+            } catch(e) {
+                console.error("Başlangıç hatası:", e);
+                alert("Bir hata oluştu. Lütfen sayfayı yenileyin.");
+            }
         };
 
         // --- LİSTELEME ---
@@ -211,17 +218,21 @@
             .then(d => {
                 var tbody = document.getElementById("tabloGovdesi");
                 tbody.innerHTML = "";
-                if (d.status === "basarili" && d.data.length > 0) {
+                
+                if (d.status === "basarili" && d.data && d.data.length > 0) {
                     d.data.forEach(item => {
                         var cls = "badge-bekliyor";
                         var st = (item.durum||"").toLowerCase();
-                        if(st.includes("okey")) cls = "badge-okey";
-                        if(st.includes("red")) cls = "badge-red";
-                        
+                        if(st.includes("okey") || st.includes("onay")) cls = "badge-okey";
+                        else if(st.includes("red") || st.includes("revize")) cls = "badge-red";
+                        else if(st.includes("işlem")) cls = "badge-islemde";
+
+                        var tarihGoster = item.tarih ? tarihFmt(item.tarih) : "-";
+
                         tbody.innerHTML += `
                         <tr>
                             <td style="font-weight:700">${item.talepNo}</td>
-                            <td>${tarihFmt(item.tarih)}</td>
+                            <td>${tarihGoster}</td>
                             <td>${item.musteri}</td>
                             <td>${item.model}</td>
                             <td>${item.kumas}</td>
@@ -231,15 +242,81 @@
                         </tr>`;
                     });
                 } else {
-                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px;">Kayıt yok.</td></tr>';
+                    var msg = d.message ? d.message : "Kayıt yok.";
+                    tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:30px;">' + msg + '</td></tr>';
                 }
+            })
+            .catch(err => {
+                console.error("Liste Hatası:", err);
+                document.getElementById("tabloGovdesi").innerHTML = '<tr><td colspan="8" style="color:red; text-align:center;">Veri alınamadı. İnternetinizi kontrol edin.</td></tr>';
             });
         }
 
-        // --- KAYDETME İŞLEMİ ---
+        // --- DROPDOWN DOLDURMA (HATA KORUMALI) ---
+        function formDropdownlariDoldur() {
+            var fd = new FormData();
+            fd.append("action", "getFormVerileri");
+            fd.append("kullaniciAdi", currentUser);
+
+            fetch(SCRIPT_URL, { method: "POST", body: fd })
+            .then(r => r.json())
+            .then(d => {
+                if(d.status === "basarili") {
+                    // MÜŞTERİLER
+                    musteriListesiCache = d.data.musteriler || []; 
+                    var mSel = document.getElementById("inpMusteri");
+                    mSel.innerHTML = '<option value="">Seçiniz...</option>';
+                    
+                    musteriListesiCache.forEach(m => {
+                        // HEM String HEM Obje desteği (Eski/Yeni sürüm fark etmez)
+                        var ad = "";
+                        if (typeof m === 'object' && m !== null) { ad = m.ad; } 
+                        else { ad = m; } // String ise
+                        
+                        if(ad) mSel.innerHTML += `<option value="${ad}">${ad}</option>`;
+                    });
+
+                    // KUMAŞLAR
+                    kumasListesiCache = d.data.kumaslar || []; 
+                    var kSel = document.getElementById("inpKumas");
+                    kSel.innerHTML = '<option value="">Seçiniz...</option>';
+                    
+                    kumasListesiCache.forEach(k => {
+                        kSel.innerHTML += `<option value="${k.kod}">${k.kod} - ${k.tanim}</option>`;
+                    });
+                }
+            })
+            .catch(e => console.error("Dropdown Hatası:", e));
+        }
+
+        // Müşteri seçilince gizli Sorumlu alanını doldur
+        function musteriSecildi() {
+            var secilenAd = document.getElementById("inpMusteri").value;
+            var sorumluKutu = document.getElementById("inpSorumlu");
+            
+            // Güvenli arama
+            var musteriObj = null;
+            if (musteriListesiCache.length > 0 && typeof musteriListesiCache[0] === 'object') {
+                 musteriObj = musteriListesiCache.find(m => m.ad == secilenAd);
+            }
+
+            if (musteriObj) {
+                sorumluKutu.value = musteriObj.sorumlu; 
+            } else {
+                sorumluKutu.value = ""; 
+            }
+        }
+
+        function kumasSecildi() {
+            var kod = document.getElementById("inpKumas").value;
+            var tanimKutu = document.getElementById("inpKumasTanim");
+            var secilen = kumasListesiCache.find(k => k.kod == kod);
+            if(secilen) tanimKutu.value = secilen.tanim; 
+        }
+
         function kaydet() {
             var musteri = document.getElementById("inpMusteri").value;
-            var sorumlu = document.getElementById("inpSorumlu").value; // Gizli alan
+            var sorumlu = document.getElementById("inpSorumlu").value; 
             var kumas = document.getElementById("inpKumas").value;
             var renk = document.getElementById("inpRenkAdi").value;
 
@@ -252,7 +329,7 @@
             fd.append("action", "kaydet");
             fd.append("temsilci", currentUser);
             fd.append("musteri", musteri);
-            fd.append("sorumlu", sorumlu); // Sorumluyu da gönderiyoruz
+            fd.append("sorumlu", sorumlu);
             fd.append("model", document.getElementById("inpModel").value);
             fd.append("kumasKod", kumas);
             fd.append("kumasTanim", document.getElementById("inpKumasTanim").value);
@@ -273,7 +350,9 @@
                 
                 if(d.status === "basarili") {
                     modalKapat();
-                    showAlert("success", "Başarılı", "Talep başarıyla oluşturuldu!\nNo: " + d.message.split(": ")[1]);
+                    // Mesajın içinden Talep No'yu çekmeye çalışalım
+                    var msg = d.message || "Başarılı";
+                    showAlert("success", "Harika!", "Talep başarıyla oluşturuldu.\n" + msg);
                     verileriGetir(); 
                 } else {
                     showAlert("error", "Hata", d.message);
@@ -282,64 +361,11 @@
             .catch(e => {
                 btn.innerText = "Kaydet";
                 btn.disabled = false;
-                showAlert("error", "Bağlantı Hatası", "Sunucuya ulaşılamadı.");
+                showAlert("error", "Bağlantı Hatası", "Sunucuya ulaşılamadı. Lütfen internetinizi kontrol edin.");
             });
         }
 
-        // --- DROPDOWN DOLDURMA (Backend'den Gelen Yeni Yapıya Göre) ---
-        function formDropdownlariDoldur() {
-            var fd = new FormData();
-            fd.append("action", "getFormVerileri");
-            fd.append("kullaniciAdi", currentUser);
-
-            fetch(SCRIPT_URL, { method: "POST", body: fd })
-            .then(r => r.json())
-            .then(d => {
-                if(d.status === "basarili") {
-                    // MÜŞTERİLER (Artık obje olarak geliyor: {ad: "LCW", sorumlu: "Ahmet"})
-                    musteriListesiCache = d.data.musteriler; // Hafızaya al
-                    var mSel = document.getElementById("inpMusteri");
-                    mSel.innerHTML = '<option value="">Seçiniz...</option>';
-                    d.data.musteriler.forEach(m => {
-                        // Dropdown'da sadece adı görünsün, değeri de adı olsun
-                        mSel.innerHTML += `<option value="${m.ad}">${m.ad}</option>`;
-                    });
-
-                    // KUMAŞLAR
-                    kumasListesiCache = d.data.kumaslar; 
-                    var kSel = document.getElementById("inpKumas");
-                    kSel.innerHTML = '<option value="">Seçiniz...</option>';
-                    d.data.kumaslar.forEach(k => {
-                        kSel.innerHTML += `<option value="${k.kod}">${k.kod} - ${k.tanim}</option>`;
-                    });
-                }
-            });
-        }
-
-        // Müşteri seçilince gizli Sorumlu alanını doldur
-        function musteriSecildi() {
-            var secilenAd = document.getElementById("inpMusteri").value;
-            var sorumluKutu = document.getElementById("inpSorumlu");
-            
-            // Cache'den bu müşteriyi bul
-            var musteriObj = musteriListesiCache.find(m => m.ad == secilenAd);
-            
-            if (musteriObj) {
-                sorumluKutu.value = musteriObj.sorumlu; // Sorumlusunu gizli kutuya yaz
-                console.log("Seçilen Müşteri Sorumlusu:", musteriObj.sorumlu);
-            } else {
-                sorumluKutu.value = "";
-            }
-        }
-
-        function kumasSecildi() {
-            var kod = document.getElementById("inpKumas").value;
-            var tanimKutu = document.getElementById("inpKumasTanim");
-            var secilen = kumasListesiCache.find(k => k.kod == kod);
-            if(secilen) tanimKutu.value = secilen.tanim; 
-        }
-
-        // --- UI FONKSİYONLARI ---
+        // UI Fonksiyonları
         function modalAc() {
             var m = document.getElementById("newRecordModal");
             m.style.display = "flex";
@@ -369,7 +395,7 @@
         }
 
         function closeAlert() { document.getElementById("customAlert").style.display = "none"; }
-        function tarihFmt(s) { if(!s)return""; return s.split("T")[0].split("-").reverse().join("."); }
+        function tarihFmt(s) { if(!s)return""; try{ return s.split("T")[0].split("-").reverse().join("."); }catch(e){return s;} }
         function cikisYap() { if(confirm("Çıkış?")) { localStorage.removeItem("kullaniciAdi"); window.location.href="index.html"; }}
     </script>
 </body>
