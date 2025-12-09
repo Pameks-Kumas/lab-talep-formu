@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Lab Talep Sistemi - Giriş</title>
     <style>
-        /* Modern Font ve Genel Ayarlar */
+        /* --- GENEL AYARLAR --- */
         body {
             font-family: 'Inter', 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: #f0f4f8; 
@@ -18,7 +18,7 @@
             box-sizing: border-box;
         }
 
-        /* Ana Giriş Kutusu */
+        /* --- GİRİŞ KUTUSU --- */
         .login-box {
             background: #ffffff;
             padding: 45px;
@@ -43,7 +43,7 @@
         }
         input:focus { border-color: #3b82f6; background-color: #fff; outline: none; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
 
-        /* Butonlar */
+        /* --- BUTONLAR --- */
         .btn {
             width: 100%; padding: 14px; border: none; border-radius: 12px; font-size: 15px; font-weight: 600; cursor: pointer; transition: all 0.2s; -webkit-tap-highlight-color: transparent;
         }
@@ -72,7 +72,7 @@
         }
         .modal.show .modal-content { transform: scale(1); }
 
-        /* --- BAŞARI MODALI --- */
+        /* --- BAŞARI MODALI (Yeşil Tik) --- */
         .success-icon-circle {
             width: 80px; height: 80px; background-color: #dcfce7; color: #16a34a; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin: 0 auto 20px auto; font-size: 40px;
         }
@@ -82,7 +82,7 @@
         .close-btn { position: absolute; top: 20px; right: 20px; font-size: 28px; cursor: pointer; color: #cbd5e1; padding: 10px; }
         .close-btn:hover { color: #64748b; }
 
-        /* Mobil Ayarlar */
+        /* Mobil İçin Ufak Ayarlar */
         @media (max-width: 480px) {
             .login-box { padding: 30px 20px; }
             h2 { font-size: 24px; }
@@ -137,13 +137,12 @@
         </div>
     </div>
 
-    <script>
-        // --- DÜZENLEME ALANI ---
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzsTLjHARaLD8Zuhj6Ib-qIH0paFOyXJa8jNFOlv_c949yBQO1lUa4C8Ycg33D8mzyW/exec"; 
-        // -----------------------
+    <script src="config.js"></script>
 
+    <script>
         var onaylanmisKullanici = "";
 
+        // FONKSİYON 1: GİRİŞ VE YÖNLENDİRME
         function girisYapVeYonlendir() {
             var k = document.getElementById("kullanici").value.trim();
             var s = document.getElementById("sifre").value.trim();
@@ -157,6 +156,7 @@
             formData.append("kullaniciAdi", k);
             formData.append("sifre", s);
 
+            // SCRIPT_URL değişkeni artık config.js dosyasından geliyor
             fetch(SCRIPT_URL, { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
@@ -164,14 +164,9 @@
                 if(data.status === "basarili") {
                     gosterMesaj("✅ Giriş Başarılı! Yönlendiriliyorsunuz...", "#16a34a");
                     
-                    // --- KRİTİK GÜNCELLEME BURASI ---
-                    // 1. Kullanıcı adını hafızaya at
+                    // Kullanıcıyı hafızaya al ve yönlendir
                     localStorage.setItem("kullaniciAdi", k);
-                    
-                    // 2. Talep Listesi sayfasına gönder
                     setTimeout(() => { window.location.href = "talep-listesi.html"; }, 1000);
-                    // ---------------------------------
-
                 } else {
                     gosterMesaj("❌ " + data.message, "#ef4444");
                 }
@@ -182,54 +177,100 @@
             });
         }
 
-        // --- Diğer Fonksiyonlar (Şifre Değiştirme vb.) ---
+        // FONKSİYON 2: ŞİFRE DEĞİŞTİRME ÖNCESİ DOĞRULAMA
         function dogrulaVeModalAc() {
             var k = document.getElementById("kullanici").value.trim();
             var s = document.getElementById("sifre").value.trim();
             if(k === "" || s === "") { gosterMesaj("Şifre değiştirmek için önce bilgilerinizi giriniz.", "#ef4444"); return; }
-            gosterMesaj("Kimlik doğrulanıyor...", "#3b82f6"); butonlariKilitle(true);
+            
+            gosterMesaj("Kimlik doğrulanıyor...", "#3b82f6"); 
+            butonlariKilitle(true);
 
             var formData = new FormData();
-            formData.append("action", "login"); formData.append("kullaniciAdi", k); formData.append("sifre", s);
+            formData.append("action", "login"); 
+            formData.append("kullaniciAdi", k); 
+            formData.append("sifre", s);
 
             fetch(SCRIPT_URL, { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
                 butonlariKilitle(false);
                 if(data.status === "basarili") {
-                    gosterMesaj("", "black"); onaylanmisKullanici = k; modalAc('passwordModal');
-                } else { gosterMesaj("❌ Bilgiler hatalı.", "#ef4444"); }
+                    gosterMesaj("", "black"); 
+                    onaylanmisKullanici = k; 
+                    modalAc('passwordModal');
+                } else { 
+                    gosterMesaj("❌ Bilgiler hatalı.", "#ef4444"); 
+                }
             })
             .catch(err => { gosterMesaj("Bağlantı hatası!", "#ef4444"); butonlariKilitle(false); });
         }
 
+        // FONKSİYON 3: ŞİFREYİ GÜNCELLEME
         function sifreyiGuncelle() {
-            var s1 = document.getElementById("yeniSifre1").value; var s2 = document.getElementById("yeniSifre2").value;
+            var s1 = document.getElementById("yeniSifre1").value; 
+            var s2 = document.getElementById("yeniSifre2").value;
             var mMsg = document.getElementById("modalMesaj");
+            
             if (s1 === "" || s2 === "") { mMsg.innerText = "Şifre boş olamaz."; mMsg.style.color = "#ef4444"; return; }
             if (s1 !== s2) { mMsg.innerText = "Şifreler uyuşmuyor!"; mMsg.style.color = "#ef4444"; return; }
+            
             mMsg.innerText = "Güncelleniyor..."; mMsg.style.color = "#3b82f6";
 
             var formData = new FormData();
-            formData.append("action", "sifreDegistir"); formData.append("kullaniciAdi", onaylanmisKullanici); formData.append("yeniSifre", s1);
+            formData.append("action", "sifreDegistir"); 
+            formData.append("kullaniciAdi", onaylanmisKullanici); 
+            formData.append("yeniSifre", s1);
 
             fetch(SCRIPT_URL, { method: "POST", body: formData })
             .then(res => res.json())
             .then(data => {
                 if(data.status === "basarili") {
-                    modalKapat('passwordModal'); setTimeout(() => { modalAc('successModal'); }, 300); document.getElementById("sifre").value = ""; 
-                } else { mMsg.style.color = "#ef4444"; mMsg.innerText = data.message; }
+                    modalKapat('passwordModal'); 
+                    setTimeout(() => { modalAc('successModal'); }, 300); 
+                    document.getElementById("sifre").value = ""; 
+                } else { 
+                    mMsg.style.color = "#ef4444"; 
+                    mMsg.innerText = data.message; 
+                }
             })
             .catch(err => { mMsg.style.color = "#ef4444"; mMsg.innerText = "Hata oluştu."; });
         }
 
-        function modalAc(id) { var m = document.getElementById(id); m.style.display = "flex"; setTimeout(() => m.classList.add("show"), 10); if(id==='passwordModal'){document.getElementById("modalMesaj").innerText="";document.getElementById("yeniSifre1").value="";document.getElementById("yeniSifre2").value="";} }
-        function modalKapat(id) { var m = document.getElementById(id); m.classList.remove("show"); setTimeout(() => m.style.display = "none", 300); }
+        // YARDIMCI FONKSİYONLAR
+        function modalAc(id) { 
+            var m = document.getElementById(id); 
+            m.style.display = "flex"; 
+            setTimeout(() => m.classList.add("show"), 10); 
+            if(id==='passwordModal'){
+                document.getElementById("modalMesaj").innerText="";
+                document.getElementById("yeniSifre1").value="";
+                document.getElementById("yeniSifre2").value="";
+            } 
+        }
+        function modalKapat(id) { 
+            var m = document.getElementById(id); 
+            m.classList.remove("show"); 
+            setTimeout(() => m.style.display = "none", 300); 
+        }
         function successKapat() { modalKapat('successModal'); }
-        function validasyon(k, s) { if(k===""||s===""){gosterMesaj("Kullanıcı adı ve şifre giriniz.", "#ef4444"); return false;} return true; }
-        function gosterMesaj(t, c) { var m = document.getElementById("mesaj"); m.innerText = t; m.style.color = c; }
-        function butonlariKilitle(d) { document.getElementById("btnGiris").disabled=d; document.getElementById("btnSifreKontrol").disabled=d; }
-        window.onclick = function(e) { if(e.target.classList.contains('modal')) { e.target.classList.remove("show"); setTimeout(()=>e.target.style.display="none",300); } }
+        function validasyon(k, s) { 
+            if(k===""||s===""){gosterMesaj("Kullanıcı adı ve şifre giriniz.", "#ef4444"); return false;} 
+            return true; 
+        }
+        function gosterMesaj(t, c) { 
+            var m = document.getElementById("mesaj"); m.innerText = t; m.style.color = c; 
+        }
+        function butonlariKilitle(d) { 
+            document.getElementById("btnGiris").disabled=d; 
+            document.getElementById("btnSifreKontrol").disabled=d; 
+        }
+        window.onclick = function(e) { 
+            if(e.target.classList.contains('modal')) { 
+                e.target.classList.remove("show"); 
+                setTimeout(()=>e.target.style.display="none",300); 
+            } 
+        }
     </script>
 
 </body>
