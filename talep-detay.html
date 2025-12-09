@@ -6,46 +6,55 @@
     <title>Talep Detayı</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        /* --- TASARIM (AYNI) --- */
+        /* --- GENEL TASARIM --- */
         body { font-family: 'Inter', sans-serif; background-color: #f1f5f9; margin: 0; padding: 20px; color: #334155; }
         .top-bar { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
         .btn-back { background: #e2e8f0; color: #475569; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; text-decoration: none; font-size: 14px; }
-        .admin-actions { display: none; gap: 10px; } 
+        
+        .admin-actions { display: none; gap: 10px; } /* Başlangıçta gizli, Temsilciye açılacak */
         .btn-edit { background: #3b82f6; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; }
         .btn-delete { background: #ef4444; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; }
+
         .container { max-width: 900px; margin: 0 auto; background: white; padding: 30px; border-radius: 24px; box-shadow: 0 10px 30px -10px rgba(0,0,0,0.08); }
         .header { display: flex; justify-content: space-between; align-items: flex-start; border-bottom: 1px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
         .title-area h1 { margin: 0; font-size: 24px; color: #1e293b; }
         .subtitle { font-size: 13px; color: #64748b; margin-top: 5px; display: block; }
-        .badge { padding: 8px 16px; border-radius: 12px; font-weight: 700; font-size: 14px; text-transform: uppercase; }
-        .badge-bekliyor { background: #fffbeb; color: #b45309; border: 1px solid #fcd34d; }
-        .badge-islemde { background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; }
-        .badge-okey { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
-        .badge-red { background: #fef2f2; color: #b91c1c; border: 1px solid #fca5a5; }
+        .badge { padding: 8px 16px; border-radius: 12px; font-weight: 700; font-size: 14px; }
+        .badge-bekliyor { background: #fffbeb; color: #b45309; } .badge-islemde { background: #eff6ff; color: #1d4ed8; } .badge-okey { background: #dcfce7; color: #15803d; } .badge-red { background: #fef2f2; color: #b91c1c; }
+
         .info-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 25px; margin-bottom: 30px; }
         .info-item label { display: block; font-size: 11px; color: #94a3b8; font-weight: 700; margin-bottom: 6px; text-transform: uppercase; }
+        
         .magic-input { width: 100%; font-family: 'Inter', sans-serif; font-size: 15px; font-weight: 600; color: #0f172a; border: 1px solid transparent; background: transparent; padding: 5px 0; border-radius: 6px; transition: all 0.2s; }
-        .magic-input:disabled { opacity: 1; -webkit-appearance: none; appearance: none; border-bottom: 1px solid #f1f5f9; cursor: default; color:#0f172a; }
+        .magic-input:disabled { opacity: 1; -webkit-appearance: none; appearance: none; border-bottom: 1px solid #f1f5f9; cursor: default; color: #0f172a; }
         .magic-input:not(:disabled) { border: 2px solid #3b82f6; background: #fff; padding: 8px; cursor: text; }
+        
         .note-box { background: #fffbeb; padding: 15px; border-radius: 12px; margin-bottom: 30px; }
         .note-textarea { width: 100%; background: transparent; border: none; color: #92400e; font-size: 14px; resize: vertical; font-family: inherit; }
         .note-textarea:not(:disabled) { border: 2px solid #b45309; background: #fff; padding: 8px; border-radius: 6px; color: #334155; }
+
         .section-title { font-size: 18px; font-weight: 700; color: #334155; margin-bottom: 20px; border-left: 4px solid #3b82f6; padding-left: 10px; }
         .lab-form { background: #f8fafc; padding: 25px; border-radius: 16px; border: 1px solid #e2e8f0; position: relative; }
-        .lab-disabled { opacity: 0.7; pointer-events: none; }
+        
+        /* Planlamacı Değilse Lab Alanı Kilitli */
+        .lab-disabled { opacity: 0.6; pointer-events: none; }
+
         .form-row { display: flex; gap: 20px; margin-bottom: 20px; }
         .form-group { flex: 1; }
         .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 8px; }
         .form-input, textarea { width: 100%; padding: 10px; border: 2px solid #e2e8f0; border-radius: 8px; box-sizing: border-box; }
-        .actions { margin-top: 25px; display: flex; justify-content: flex-end; }
-        .btn-save { background: #3b82f6; color: white; padding: 12px 24px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; }
+        .btn-save { background: #3b82f6; color: white; padding: 12px 24px; border-radius: 10px; border: none; font-weight: 600; cursor: pointer; float:right; margin-top:15px; }
+        
         .approval-area { margin-top: 40px; padding-top: 30px; border-top: 2px dashed #e2e8f0; display: none; }
         .approval-buttons { display: flex; gap: 15px; margin-top: 15px; }
         .btn-approve { background: #16a34a; color: white; flex: 1; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
         .btn-reject { background: #dc2626; color: white; flex: 1; padding: 15px; border: none; border-radius: 10px; font-weight: bold; cursor: pointer; }
+
+        /* MODALS */
         .custom-modal { display: none; position: fixed; z-index: 200; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.4); align-items: center; justify-content: center; }
-        .custom-modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .custom-modal-content { background: white; padding: 30px; border-radius: 20px; width: 90%; max-width: 400px; text-align: center; }
         .btn-modal { padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer; font-weight: 600; margin: 5px; }
+        
         @media (max-width: 600px) { .form-row { flex-direction: column; gap: 15px; } .header { flex-direction: column; } }
     </style>
 </head>
@@ -55,7 +64,7 @@
         <button class="btn-back" onclick="window.location.href='talep-listesi.html'">← Listeye Dön</button>
         <div class="admin-actions" id="adminActions">
             <button class="btn-edit" id="btnEdit" onclick="duzenleModuAc()">✏️ Düzenle</button>
-            <button class="btn-edit" id="btnSaveEdit" onclick="duzenlemeyiKaydet()" style="display:none; background:#16a34a;">💾 Değişiklikleri Kaydet</button>
+            <button class="btn-edit" id="btnSaveEdit" onclick="duzenlemeyiKaydet()" style="display:none; background:#16a34a;">💾 Kaydet</button>
             <button class="btn-delete" onclick="silmeModalAc()">🗑️ Sil</button>
         </div>
         <div style="font-size:13px; color:#94a3b8;" id="userDisplay">...</div>
@@ -92,7 +101,7 @@
                 <div class="form-group"><label>Giden Tarih</label><input type="date" id="inpGiden" class="form-input"></div>
                 <div class="form-group"><label>Gelen Tarih</label><input type="date" id="inpGelen" class="form-input"></div>
             </div>
-            <div class="form-group" style="margin-bottom:20px;"><label>Sunulan Varyantlar</label><input type="text" id="inpVaryant" class="form-input" placeholder="V1, V2..."></div>
+            <div class="form-group" style="margin-bottom:20px;"><label>Sunulan Varyantlar</label><input type="text" id="inpVaryant" class="form-input" placeholder="Örn: V1, V2..."></div>
             <div class="form-group" style="margin-bottom:20px;"><label>Seçilen Reçete</label><input type="text" id="inpRecete" class="form-input" readonly style="background-color:#e2e8f0;"></div>
             <div class="form-group"><label>Lab Açıklaması</label><textarea id="inpLabNot" rows="2" class="form-input"></textarea></div>
             <div class="actions" id="labSaveBtnArea"><button class="btn-save" onclick="labKaydet()">💾 Lab Kaydet</button></div>
@@ -109,7 +118,7 @@
 
     <div id="alertModal" class="custom-modal"><div class="custom-modal-content"><h3 id="alertTitle"></h3><p id="alertMsg"></p><button class="btn-modal" style="background:#334155; color:white;" onclick="closeModal('alertModal')">Tamam</button></div></div>
     <div id="deleteChoiceModal" class="custom-modal"><div class="custom-modal-content"><h3 style="color:#dc2626;">Silme İşlemi</h3><p>Nasıl silmek istersiniz?</p><button class="btn-modal" style="background:#ef4444; color:white;" onclick="silmeIslemi('tek')">Sadece Bu Rengi Sil</button><button class="btn-modal" style="background:#b91c1c; color:white;" onclick="silmeIslemi('grup')">⚠️ Tüm Grubu Sil</button><button class="btn-modal" onclick="closeModal('deleteChoiceModal')">İptal</button></div></div>
-    <div id="rejectModal" class="custom-modal"><div class="custom-modal-content"><h3 style="color:#dc2626;">Revize Onayı</h3><p>Red sebebini belirtiniz (Zorunlu):</p><textarea id="inpRejectReason" class="form-input" rows="3"></textarea><div style="margin-top:15px;"><button class="btn-modal" onclick="closeModal('rejectModal')">İptal</button><button class="btn-modal" style="background:#dc2626; color:white;" onclick="reddetIslemi()">Reddet</button></div></div></div>
+    <div id="rejectModal" class="custom-modal"><div class="custom-modal-content"><h3 style="color:#dc2626;">Revize Onayı</h3><textarea id="inpRejectReason" class="form-input" rows="3" placeholder="Red sebebi (Zorunlu)..."></textarea><div style="margin-top:15px;"><button class="btn-modal" onclick="closeModal('rejectModal')">İptal</button><button class="btn-modal" style="background:#dc2626; color:white;" onclick="reddetIslemi()">Reddet</button></div></div></div>
     <div id="approveModal" class="custom-modal"><div class="custom-modal-content"><h3>Onay</h3><p>Onaylanan Reçete No:</p><input type="text" id="inpApproveRecete" class="form-input"><div style="margin-top:20px;"><button class="btn-modal" onclick="closeModal('approveModal')">İptal</button><button class="btn-modal" style="background:#16a34a; color:white;" onclick="onaylaIslemi()">Onayla</button></div></div></div>
 
     <script src="config.js"></script>
@@ -122,33 +131,42 @@
             var urlParams = new URLSearchParams(window.location.search); talepNo = urlParams.get('no');
             if(!talepNo) { window.location.href = "talep-listesi.html"; return; }
             
-            // --- KRİTİK DÜZELTME: Önce Listeleri Çek, SONRA Detayı Çek ---
-            // Listeler dolmadan detay gelirse, selectbox value'su set edilemez ve boş kalır.
-            listeVerileriniHazirla();
+            // SENKRONİZASYON DÜZELTMESİ
+            // Önce Listeler Dolsun, SONRA Detay Gelsin
+            baslat();
         };
 
-        function listeVerileriniHazirla() {
-            var fd=new FormData(); fd.append("action","getFormVerileri"); fd.append("kullaniciAdi",currentUser);
-            fetch(SCRIPT_URL,{method:"POST",body:fd}).then(r=>r.json()).then(d=>{
-                if(d.status==="basarili") {
-                    var mSel = document.getElementById("inpMusteri");
-                    var mHtml = "";
-                    d.data.musteriler.forEach(m => { mHtml += `<option value="${m.ad}">${m.ad}</option>`; });
-                    mSel.innerHTML += mHtml; 
+        // Promise Zinciri ile Sıralı Çalıştırma
+        function baslat() {
+            dropdownlariDoldur()
+            .then(() => detayGetir())
+            .catch(err => console.error("Başlatma hatası:", err));
+        }
 
-                    var kList = document.getElementById("kumasListesi");
-                    var kHtml = "";
-                    d.data.kumaslar.forEach(k => { kHtml += `<option value="${k}">`; });
-                    kList.innerHTML = kHtml; 
-                    
-                    // Listeler doldu, ŞİMDİ detayı çekebiliriz
-                    detayGetir();
-                }
-            }).catch(e => {
-                alert("Liste verileri yüklenemedi. İnternetinizi kontrol edin.");
+        // Dropdownları dolduran ve Promise döndüren fonksiyon
+        function dropdownlariDoldur() {
+            return new Promise((resolve, reject) => {
+                var fd=new FormData(); fd.append("action","getFormVerileri"); fd.append("kullaniciAdi",currentUser);
+                fetch(SCRIPT_URL,{method:"POST",body:fd}).then(r=>r.json()).then(d=>{
+                    if(d.status==="basarili") {
+                        var mSel = document.getElementById("inpMusteri");
+                        var mHtml = "";
+                        d.data.musteriler.forEach(m => { mHtml += `<option value="${m.ad}">${m.ad}</option>`; });
+                        mSel.innerHTML += mHtml; 
+
+                        var kList = document.getElementById("kumasListesi");
+                        var kHtml = "";
+                        d.data.kumaslar.forEach(k => { kHtml += `<option value="${k}">`; });
+                        kList.innerHTML = kHtml; 
+                        resolve(); // İşlem tamam
+                    } else {
+                        reject("Liste verileri alınamadı");
+                    }
+                }).catch(reject);
             });
         }
 
+        // Detayı çeken fonksiyon
         function detayGetir() {
             var fd=new FormData(); fd.append("action","getTalepDetay"); fd.append("talepNo",talepNo);
             fetch(SCRIPT_URL,{method:"POST",body:fd}).then(r=>r.json()).then(d=>{
@@ -158,6 +176,7 @@
 
         function arayuzuAyarla(data) {
             document.getElementById("lblTalepNo").innerText=data.talepNo;
+            document.getElementById("lblTarih").innerText=fmtDate(data.tarih);
             document.getElementById("lblTur").innerText=data.tur || "İlk Tur";
             var d=document.getElementById("lblDurum"); d.innerText=data.durum; d.className="badge";
             if(data.durum.includes("Bekliyor"))d.classList.add("badge-bekliyor"); else if(data.durum.includes("Okey"))d.classList.add("badge-okey"); else if(data.durum.includes("Red"))d.classList.add("badge-red"); else d.classList.add("badge-islemde");
@@ -168,10 +187,10 @@
             document.getElementById("inpKumas").value = data.kumasKod + " - " + data.kumasTanim;
             document.getElementById("inpRenk").value = data.renkAdi;
             document.getElementById("inpTermin").value = inpDate(data.termin);
-            document.getElementById("lblPersonel").value = data.temsilci + " / " + (data.planlamaci||"-");
+            // Temsilci "undefined" hatası burada düzeldi (Backend'de değişken adını düzelttik)
+            document.getElementById("lblPersonel").value = (data.temsilci||"") + " / " + (data.planlamaci||"-");
             document.getElementById("inpNot").value = data.notlar||"";
 
-            // Lab
             document.getElementById("inpBoyahane").value=data.boyahane||"";
             document.getElementById("inpGiden").value=inpDate(data.gidenTarih);
             document.getElementById("inpGelen").value=inpDate(data.gelenTarih);
@@ -179,19 +198,23 @@
             document.getElementById("inpRecete").value=data.recete||"";
             document.getElementById("inpLabNot").value=data.labAciklama||"";
 
-            // --- YETKİ KONTROLÜ (Genişletilmiş) ---
-            // Rol stringi içinde "Admin" veya "Müşteri" geçiyorsa yetki ver
+            // YETKİ KONTROLÜ (DUVAR GİBİ)
+            // Admin veya Temsilci ise
             if (currentRole.includes("Müşteri Temsilcisi") || currentRole.includes("Admin")) {
                 document.getElementById("approvalSection").style.display = "block";
                 document.getElementById("adminActions").style.display = "flex";
+                
+                // Lab Alanını KİLİTLE (Sadece görsün)
                 document.getElementById("labFormArea").classList.add("lab-disabled");
                 document.getElementById("labSaveBtnArea").style.display = "none";
                 
                 if(!data.durum.includes("Bekliyor")) document.querySelector(".btn-delete").style.display = "none";
             } 
-            else if(currentRole.includes("Planlama")) {
+            // Planlamacı ise
+            else if (currentRole.includes("Planlama")) {
                 document.getElementById("approvalSection").style.display = "none";
                 document.getElementById("adminActions").style.display = "none";
+                // Lab Alanını AÇ
                 document.getElementById("labFormArea").classList.remove("lab-disabled");
             }
         }
